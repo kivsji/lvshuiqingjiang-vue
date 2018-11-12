@@ -26,7 +26,7 @@ export const login = req => {
 }
 
 export const getUserInfo = req => {
-  const params = getParams(req.url)
+  // const params = getParams(req.url)
   return {
     code: 200,
     data: USER_MAP['super_admin'],

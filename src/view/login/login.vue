@@ -35,8 +35,10 @@ export default {
             this.handleLogin({ username, password }).then(res => {
                 console.log(1);
                 this.$router.push({
-                        name: "active"
+                        path: '/'
                     });
+                    console.log(1);
+                    
             },res=>{
                 console.log(2);
                 this.$Message.error('账号或密码错误，请重新登录')

@@ -12,7 +12,7 @@ import parentView from '@/components/parent-view'
  */
 
 export default [
-    {
+  {
     path: '/login',
     name: 'login',
     meta: {
@@ -20,22 +20,42 @@ export default [
       hideInMenu: true
     },
     component: () => import('@/view/login/login.vue')
-  }, 
+  },
   {
     path: '/',
-    name: 'home',
+    name: '功能',
     component: Main,
     redirect: '/active',
-    children:[
-        {
-            path:'active',
-            name:'active',
-            meta: {
-                title:'活动列表',
-                icon: 'ios-paper-outline'
-            },
-            component: () => import('@/view/lvshuiqingjiang/active/active.vue')
-        }
+    meta: {
+      icon: 'ios-apps'
+    },
+    children: [
+      {
+        path: 'active',
+        name: 'active',
+        meta: {
+          title: '活动列表',
+          icon: 'ios-browsers-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/active/active.vue')
+      },
+      {
+        path: 'vip',
+        name: 'vip',
+        meta: {
+          title: 'vip管理',
+          icon: 'ios-person'
+        },
+        component: () => import('@/view/lvshuiqingjiang/vip/vip.vue')
+      },{
+        path: 'shop',
+        name: 'shop',
+        meta: {
+          title: '商城管理',
+          icon: 'ios-cart-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/shop/shop.vue')
+      }
     ],
   }, {
     path: '/401',
