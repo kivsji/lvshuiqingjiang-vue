@@ -33,10 +33,12 @@ export default {
         ...mapActions(["handleLogin"]),
         handleSubmit({ username, password }) {
             this.handleLogin({ username, password }).then(res => {
+                console.log(1);
                 this.$router.push({
-                        name: "home"
+                        name: "active"
                     });
             },res=>{
+                console.log(2);
                 this.$Message.error('账号或密码错误，请重新登录')
             });
         },

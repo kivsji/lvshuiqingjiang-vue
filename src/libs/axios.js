@@ -28,7 +28,6 @@ class httpRequest {
       if (!config.url.includes('/users')) {
         config.headers['token'] = Cookies.get(TOKEN_KEY)
       }
-      // Spin.show()
       // 在发送请求之前做些什么
       return config
     }, error => {
@@ -41,12 +40,6 @@ class httpRequest {
       let { data } = res
       
       const is = this.destroy(url)
-      if (!is) {
-        setTimeout(() => {
-          // Spin.hide()
-        }, 500)
-      }
-      // console.log(data.code);
       if (data.code === 401) {
         // Cookies.remove(TOKEN_KEY)
         window.location.href = '/login'
@@ -65,7 +58,6 @@ class httpRequest {
         return false
       }
       */
-      // console.log(data)
       return data
     }, (error) => {
       

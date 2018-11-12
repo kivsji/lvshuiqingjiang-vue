@@ -19,9 +19,9 @@
       </Header>
       <Content>
         <Layout>
-          <div class="tag-nav-wrapper">
+          <!-- <div class="tag-nav-wrapper">
             <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag" />
-          </div>
+          </div> -->
           <Content class="content-wrapper">
             <keep-alive :include="cacheList">
               <router-view/>
@@ -122,51 +122,6 @@ export default {
     },
     handleClick(item) {
       this.turnToPage(item.name);
-    },
-
-    //循环getNotices
-    getNotices: ()=> {
-      axios
-        .request({
-          url: "/notices",
-          method: "get"
-        })
-        .then(res => {
-          if (res.data.length > 0) {
-            window.Notice.info({
-              title: "通知",
-              duration: 0,
-              name: "hasMatter",
-              render: h => {
-                return h(
-                  "p",
-                  {
-                    style: {
-                      fontSize: "13px"
-                    }
-                  },
-                  [
-                    "您有" + res.data.length + "条新的待办事项，请及时",
-                    h(
-                      "a",
-                      {
-                        attrs: {
-                          // onclick: 'this.vue.$router.push({path:"/matter/upcomingMatter"})'
-                          onclick:
-                            'localStorage.setItem("docsId",' +
-                            res.data[0].doc_id +
-                            ');window.router.push({path:"/matter/upcomingMatterDefalt"});window.Notice.close("hasMatter")'
-                        }
-                      },
-                      "处理"
-                    )
-                  ]
-                );
-              }
-            });
-            setInterval(() => {}, 10000);
-          }
-        });
     }
   },
   watch: {
@@ -181,10 +136,10 @@ export default {
      */
     try {
       this.setTagNavList([
-        {"name":"图片管理",
-        "path":"/pzhanAll/picManage",
-        "meta":{"icon":"ios-list-box-outline","title":"图片管理"}
-        }
+        // {"name":"活动列表",
+        // "path":"/active",
+        // "meta":{"icon":"ios-list-box-outline","title":"活动列表"}
+        // }
       ]);
     } catch (error) {
       console.log(123);
@@ -196,106 +151,6 @@ export default {
     this.setLocal(this.$i18n.locale);
     // 文档提示
     window.router = this.$router;
-
-
-    return
-    axios
-        .request({
-          url: "/notices",
-          method: "get"
-        })
-        .then(res => {
-          if (res && res.data.length > 0 && location.pathname !== '/matter/upcomingMatterDefalt') {
-            this.$Notice.close("hasMatter")
-            this.$Notice.info({
-              title: "通知",
-              duration: 0,
-              name: "hasMatter",
-              onClose: ()=>{
-                clearInterval(Intime)
-              },
-              render: h => {
-                return h(
-                  "p",
-                  {
-                    style: {
-                      fontSize: "13px"
-                    }
-                  },
-                  [
-                    "您有" + res.data.length + "条新的待办事项，请及时",
-                    h(
-                      "a",
-                      {
-                        on: {
-                          click: ()=>{
-                              localStorage.setItem("docsId",res.data[0].doc_id)
-                              this.$router.push({path:"/matter/upcomingMatterDefalt"})
-                              // this.$Notice.close("hasMatter")
-                              this.$Notice.destroy()
-                          }
-                        }
-                      },
-                      "处理"
-                    )
-                  ]
-                );
-              }
-            });
-          }else if(!res){
-            clearInterval(Intime)
-          }
-        })
-    var Intime = setInterval(()=>{
-      
-        axios
-        .request({
-          url: "/notices",
-          method: "get"
-        })
-        .then(res => {
-          if (res && res.data.length > 0 && location.pathname !== '/matter/upcomingMatterDefalt') {
-            this.$Notice.close("hasMatter")
-            this.$Notice.info({
-              title: "通知",
-              duration: 0,
-              name: "hasMatter",
-              onClose: ()=>{
-                clearInterval(Intime)
-              },
-              render: h => {
-                return h(
-                  "p",
-                  {
-                    style: {
-                      fontSize: "13px"
-                    }
-                  },
-                  [
-                    "您有" + res.data.length + "条新的待办事项，请及时",
-                    h(
-                      "a",
-                      {
-                        on: {
-                          click: ()=>{
-                              localStorage.setItem("docsId",res.data[0].doc_id)
-                              this.$router.push({path:"/matter/upcomingMatterDefalt"})
-                              // this.$Notice.close("hasMatter")
-                              this.$Notice.destroy()
-                          }
-                        }
-                      },
-                      "处理"
-                    )
-                  ]
-                );
-              }
-            });
-          }else if(!res){
-            clearInterval(Intime)
-          }
-        })
-    },10000)
   }
 };
 </script>

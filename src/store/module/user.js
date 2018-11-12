@@ -1,6 +1,6 @@
 import { login, logout, getUserInfo } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
-
+import Cookies from 'js-cookie'
 export default {
   state: {
     username: '',
@@ -38,11 +38,11 @@ export default {
         }).then(res => {
           const data = res.data
           commit('setToken', res.token)
+          Cookies.set('token', res.data.token)
           localStorage.setItem('token',res.token)
           resolve()
         }).catch(err => {
           console.log(err);
-          
           reject(err)
         })
       })
