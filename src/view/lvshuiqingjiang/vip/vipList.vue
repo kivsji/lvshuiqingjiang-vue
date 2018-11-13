@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Spin size="large" fix v-if="spinShow"></Spin>
         <row>
             <i-col style="margin-bottom:10px;">
                 <Button type='primary' @click='newData()'>新建VIP</Button>
@@ -62,6 +63,7 @@ import Cookies from "js-cookie";
 export default {
     data() {
         return {
+            spinShow:false,
             total: 1,
             pre_page: 1,
             dataModal: false,
@@ -135,7 +137,9 @@ export default {
                                             "font-size:12px;margin-left:10px;"
                                     },
                                     nativeOn: {
-                                        click: () => {}
+                                        click: () => {
+                                            
+                                        }
                                     }
                                 },
                                 "删除"
@@ -165,6 +169,7 @@ export default {
             this.dataModal = i;
         },
         getVipList() {
+            this.spinShow = true
             //获取会员列表
             axios
                 .request({
@@ -173,10 +178,12 @@ export default {
                 })
                 .then(res => {
                     this.vipList = res.data;
+                    this.spinShow = false
                 });
         },
         inputVipData() {
             //提价会员资料
+            this.spinShow = true
             if (this.isNew) {
                 //新增
                 axios
@@ -198,6 +205,9 @@ export default {
             } else {
                 //修改
             }
+        },
+        deleteVip(){
+            //删除会员
         },
         changeVipDate(t) {
             //改变会员有效日期
