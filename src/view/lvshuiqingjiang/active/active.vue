@@ -1,11 +1,12 @@
 <template>
     <div>
         <row>
+            <Spin size="large" fix v-if="spinShow"></Spin>
             <i-col style="margin-bottom:10px;">
-                <Button type='primary' @click='cancelInput(true)'>新建活动</Button>
+                <Button type='primary' @click='newData()'>新建活动</Button>
             </i-col>
             <i-col style="margin-bottom:20px;">
-                <Page :total="total" :page-size="pre_page" />
+                <Page :total="total" :page-size="pre_page" :on-change='changePage' />
             </i-col>
             <i-col>
                 <i-table size="large" style="min-width:1200px;" :columns="activeColunm" :data="activeList"></i-table>
@@ -17,7 +18,7 @@
                     活动封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="http://localhost:8000/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
@@ -62,7 +63,7 @@
                     报名日期
                 </i-col>
                 <i-col span='20'>
-                    <DatePicker @on-change='changeActiveDate' :value='activeData.signDate' type="daterange" placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
+                    <DatePicker @on-change='changeActiveSignDate' :value='activeData.signDate' type="daterange" placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
                 </i-col>
             </row>
 
@@ -95,9 +96,13 @@ import Cookies from "js-cookie";
 export default {
     data() {
         return {
+            spinShow:false,
             total: 1,
             pre_page: 1,
+            currentPage:1,
             dataModal: false,
+            isNew: false,
+            currentId: "",
             dataTitle: "新增活动",
             activeType: "免费",
             activeData: {
@@ -105,12 +110,10 @@ export default {
                     "http://img1.imgtn.bdimg.com/it/u=371772476,1548437417&fm=26&gp=0.jpg",
                 title: "",
                 content: "",
-                activeDate: '',
-                // activeDate: ["2018-11-07", "2018-12-05"],
+                activeDate: ["2018-11-07", "2018-12-05"],
                 signDate: ["2018-11-07", "2018-12-05"],
                 places: 0,
-                //2018-08-08-2018-12-05
-                type: "0",
+                type: 0,
                 money: 0
             },
             activeColunm: [
@@ -120,23 +123,34 @@ export default {
                 },
                 {
                     title: "活动开始日期",
-                    key: "beginTime"
+                    key: "start_time"
                 },
                 {
                     title: "活动结束日期",
-                    key: "endTime"
+                    key: "end_time"
                 },
                 {
                     title: "报名开始日期",
-                    key: "signBeginTime"
+                    key: "sign_start_time"
                 },
                 {
                     title: "报名结束日期",
-                    key: "signEndTime"
+                    key: "sign_end_time"
                 },
                 {
                     title: "活动状态",
-                    key: "status"
+                    // key: "status",
+                    render: (h, params) => {
+                        return h(
+                            "p",
+                            {
+                                attrs: {
+                                    style:'color:#'+params.row.status===0?'2d8cf0':(params.row.status===1?'19be6b':'ff9900')
+                                }
+                            },
+                            params.row.status===0?'未开始':(params.row.status===1?'开始':'已结束')
+                        );
+                    }
                 },
                 {
                     title: "操作",
@@ -155,13 +169,31 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            localStorage.setItem(
-                                                "docsId",
-                                                params.row.id
-                                            );
-                                            this.$router.push({
-                                                path: "/"
-                                            });
+                                            this.cancelInput(true);
+                                            this.isNew = false;
+                                            this.currentId = params.row.id;
+
+                                            this.activeData = {
+                                                image: params.row.thumb,
+                                                title: params.row.name,
+                                                content: params.row.content,
+                                                activeDate: [
+                                                    params.row.start_time,
+                                                    params.row.end_time
+                                                ],
+                                                signDate: [
+                                                    params.row.sign_start_time,
+                                                    params.row.sign_end_time
+                                                ],
+                                                places: params.row.places,
+                                                type: params.row.sign_type,
+                                                money: parseInt(
+                                                    params.row.sign_price
+                                                )
+                                            };
+                                            this.activeData.type === 0
+                                                ? (this.activeType = "免费")
+                                                : (this.activeType = "付费");
                                         }
                                     }
                                 },
@@ -179,15 +211,7 @@ export default {
                                             "font-size:12px;margin-left:10px;"
                                     },
                                     nativeOn: {
-                                        click: () => {
-                                            localStorage.setItem(
-                                                "docsId",
-                                                params.row.id
-                                            );
-                                            this.$router.push({
-                                                path: "/"
-                                            });
-                                        }
+                                        click: () => {}
                                     }
                                 },
                                 "查看报名列表"
@@ -204,27 +228,29 @@ export default {
                     signBeginTime: "2018-11-5",
                     signEndTime: "2018-11-08",
                     status: "1"
-                },
-                {
-                    name: "活动2",
-                    beginTime: "2018-11-08",
-                    endTime: "2018-11-11",
-                    signBeginTime: "2018-11-5",
-                    signEndTime: "2018-11-08",
-                    status: "1"
-                },
-                {
-                    name: "活动3",
-                    beginTime: "2018-11-08",
-                    endTime: "2018-11-11",
-                    signBeginTime: "2018-11-5",
-                    signEndTime: "2018-11-08",
-                    status: "1"
                 }
             ]
         };
     },
     methods: {
+        changePage(index){
+            this.currentPage = index
+            this.getActive()
+        },
+        newData() {
+            this.isNew = true;
+            this.activeData = {
+                image: "",
+                title: "",
+                content: "",
+                activeDate: ["", ""],
+                signDate: ["", ""],
+                places: 100,
+                type: 0,
+                money: 0
+            };
+            this.cancelInput(true);
+        },
         cancelInput(i) {
             //打开活动Modal
             this.dataModal = i;
@@ -234,18 +260,74 @@ export default {
         },
         okInput() {
             //提交活动数据
+            if (this.isNew) {
+                this.spinShow = true
+                //新增
+                axios
+                    .request({
+                        url: "/activitys",
+                        method: "post",
+                        data: {
+                            thumb: this.activeData.image,
+                            name: this.activeData.title,
+                            content: this.activeData.content,
+                            start_time: this.activeData.activeDate[0],
+                            end_time: this.activeData.activeDate[1],
+                            sign_start_time: this.activeData.signDate[0],
+                            sign_end_time: this.activeData.signDate[1],
+                            places: this.activeData.places,
+                            sign_type: this.activeData.type,
+                            sign_price: this.activeData.money
+                        }
+                    })
+                    .then(res => {
+                        this.getActive();
+                        this.$Message.success("新增成功");
+                    });
+            } else {
+                this.spinShow = true
+                //修改
+                axios
+                    .request({
+                        url: "/activitys/" + this.currentId,
+                        method: "put",
+                        data: {
+                            thumb: this.activeData.image,
+                            name: this.activeData.title,
+                            content: this.activeData.content,
+                            start_time: this.activeData.activeDate[0],
+                            end_time: this.activeData.activeDate[1],
+                            sign_start_time: this.activeData.signDate[0],
+                            sign_end_time: this.activeData.signDate[1],
+                            places: this.activeData.places,
+                            sign_type: this.activeData.type,
+                            sign_price: this.activeData.money
+                        }
+                    })
+                    .then(res => {
+                        this.getActive();
+                        this.$Message.success("修改成功");
+                    });
+            }
         },
         getActive() {
+            this.spinShow = true
             //获取活动数据
-            axios.request({
-                url:'/activitys',
-                method:'get'
-            }).then(res=>{
-                console.log(res);
-            })
+            axios
+                .request({
+                    url: "/activitys?page="+this.currentPage,
+                    method: "get"
+                })
+                .then(res => {
+                    this.activeList = res.data.data;
+                    this.spinShow = false
+                });
         },
         changeActiveDate(t) {
-            console.log(t);
+            this.activeData.activeDate = t
+        },
+        changeActiveSignDate(t) {
+            this.activeData.signDate = t
         },
         changeActiveType(t) {
             //更改活动报名类型触发
@@ -261,7 +343,7 @@ export default {
         beforeUpload(file) {}
     },
     mounted() {
-        this.getActive()
+        this.getActive();
     },
     computed: {
         headers() {
