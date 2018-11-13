@@ -46,7 +46,7 @@
                     活动日期
                 </i-col>
                 <i-col span='20'>
-                    <DatePicker @on-change='changeActiveDate' :value='activeData.activeDate' type="daterange" placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
+                    <DatePicker type='daterange' @on-change='changeActiveDate' :value='activeData.activeDate' placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
@@ -105,7 +105,8 @@ export default {
                     "http://img1.imgtn.bdimg.com/it/u=371772476,1548437417&fm=26&gp=0.jpg",
                 title: "",
                 content: "",
-                activeDate: ["2018-11-07", "2018-12-05"],
+                activeDate: '',
+                // activeDate: ["2018-11-07", "2018-12-05"],
                 signDate: ["2018-11-07", "2018-12-05"],
                 places: 0,
                 //2018-08-08-2018-12-05
@@ -236,8 +237,16 @@ export default {
         },
         getActive() {
             //获取活动数据
+            axios.request({
+                url:'/activitys',
+                method:'get'
+            }).then(res=>{
+                console.log(res);
+            })
         },
-        changeActiveDate() {},
+        changeActiveDate(t) {
+            console.log(t);
+        },
         changeActiveType(t) {
             //更改活动报名类型触发
             if (t === "免费") {
@@ -251,7 +260,9 @@ export default {
         successUpload(file) {},
         beforeUpload(file) {}
     },
-    mounted() {},
+    mounted() {
+        this.getActive()
+    },
     computed: {
         headers() {
             return {
