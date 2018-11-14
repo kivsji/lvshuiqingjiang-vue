@@ -1,7 +1,7 @@
 <template>
     <div>
-        <row>
             <Spin size="large" fix v-if="spinShow"></Spin>
+        <row>
             <i-col style="margin-bottom:10px;">
                 <Button type='primary' @click='newData()'>新建活动</Button>
             </i-col>
@@ -265,7 +265,7 @@ export default {
                 //新增
                 axios
                     .request({
-                        url: "/activitys",
+                        url: "activity/activitys",
                         method: "post",
                         data: {
                             thumb: this.activeData.image,
@@ -289,7 +289,7 @@ export default {
                 //修改
                 axios
                     .request({
-                        url: "/activitys/" + this.currentId,
+                        url: "activity/activitys" + this.currentId,
                         method: "put",
                         data: {
                             thumb: this.activeData.image,
@@ -315,7 +315,7 @@ export default {
             //获取活动数据
             axios
                 .request({
-                    url: "/activitys?page="+this.currentPage,
+                    url: "activity/activitys?page="+this.currentPage,
                     method: "get"
                 })
                 .then(res => {

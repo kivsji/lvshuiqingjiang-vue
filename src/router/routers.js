@@ -63,6 +63,22 @@ export default [
               icon: 'ios-settings-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipSet.vue')
+          },{
+            path: '/vipMoney',
+            name: 'vipMoney',
+            meta: {
+              title: 'VIP充值设置',
+              icon: 'ios-settings-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/vip/vipMoney.vue')
+          },{
+            path: '/vipTag',
+            name: 'vipTag',
+            meta: {
+              title: 'VIP标签',
+              icon: 'ios-settings-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/vip/vipTag.vue')
           }
         ],
         component: () => import('@/view/lvshuiqingjiang/vip/vip.vue')

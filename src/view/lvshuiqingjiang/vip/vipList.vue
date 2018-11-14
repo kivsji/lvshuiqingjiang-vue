@@ -11,7 +11,7 @@
             <i-col>
                 <i-table size="large" style="min-width:1200px;" :columns="vipColunm" :data="vipList"></i-table>
             </i-col>
-            <Modal v-model="dataModal" :title='dataTitle' @on-ok="inputVipData" @on-cancel="cancelInput(false)">
+            <Modal v-model="dataModal" :title='dataTitle' @on-ok="inputVipData" @on-cancel="cancleWindow()">
                 <row style="margin-top:20px;">
                     <i-col span='4' style="line-height:30px;">
                         名称
@@ -41,7 +41,7 @@
                         可用余额
                     </i-col>
                     <i-col span='20'>
-                        <InputNumber v-model="vipData.money" :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
+                        <InputNumber :min="0.00" v-model="vipData.money" :precision='2' :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                     </i-col>
                 </row>
                 <row style="margin-top:20px;">
@@ -52,6 +52,9 @@
                         <DatePicker @on-change='changeVipDate' :value='vipData.deadline' type="date" placement="bottom-end" placeholder="有效日期" style="width: 200px"></DatePicker>
                     </i-col>
                 </row>
+            </Modal>
+            <Modal v-model="deleteShow" title='删除' @on-ok="deleteVip" @on-cancel="deleteModal(false)">
+                是否删除 <span style="color:red;">{{currentName}}</span> ?
             </Modal>
         </row>
     </div>
@@ -67,9 +70,11 @@ export default {
             total: 1,
             pre_page: 1,
             dataModal: false,
+            deleteShow:false,
             dataTitle: "新增会员",
             isNew: false,
             currentId: "",
+            currentName:'',
             vipData: {
                 name: "",
                 fan_id: "",
@@ -120,7 +125,13 @@ export default {
                                         style: "font-size:12px"
                                     },
                                     nativeOn: {
-                                        click: () => {}
+                                        click: () => {
+                                            this.cancelInput(true)
+                                            this.isNew = false
+                                            this.vipData = params.row
+                                            this.currentId = params.row.id
+                                            this.vipData.money = parseFloat(this.vipData.money)
+                                        }
                                     }
                                 },
                                 "编辑"
@@ -138,7 +149,11 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
+                                            this.deleteModal(true)
                                             
+                                            this.currentId = params.row.id
+                                            console.log(this.currentId);
+                                            this.currentName = params.row.name
                                         }
                                     }
                                 },
@@ -165,15 +180,22 @@ export default {
             }
             this.cancelInput(true)
         },
+        cancleWindow(){
+            this.cancelInput(false)
+            this.getVipList()
+        },
         cancelInput(i) {
             this.dataModal = i;
+        },
+        deleteModal(i){
+            this.deleteShow = i
         },
         getVipList() {
             this.spinShow = true
             //获取会员列表
             axios
                 .request({
-                    url: "/members",
+                    url: "/member/members",
                     method: "get"
                 })
                 .then(res => {
@@ -182,13 +204,24 @@ export default {
                 });
         },
         inputVipData() {
+            if(
+                this.vipData.name === ''||
+                this.vipData.mobile === ''||
+                this.vipData.integral === ''||
+                this.vipData.money === ''||
+                this.vipData.deadline === ''
+            ){
+                this.$Message.error('会员资料不完整，无法提交')
+                this.getVipList()
+                return
+            }
             //提价会员资料
             this.spinShow = true
             if (this.isNew) {
                 //新增
                 axios
                     .request({
-                        url: "/members",
+                        url: "/member/members",
                         method: "post",
                         data: {
                             name: this.vipData.name,
@@ -199,15 +232,39 @@ export default {
                         }
                     })
                     .then(res => {
-                        this.vipData = res.data;
                         this.getVipList()
                     });
             } else {
                 //修改
+                axios
+                    .request({
+                        url: "/member/members/"+this.vipData.id,
+                        method: "put",
+                        data: {
+                            name: this.vipData.name,
+                            mobile: this.vipData.mobile,
+                            integral: this.vipData.integral,
+                            money: this.vipData.money,
+                            deadline: this.vipData.deadline //结束日期
+                        }
+                    })
+                    .then(res => {
+                        this.getVipList()
+                    });
             }
         },
         deleteVip(){
             //删除会员
+            this.spinShow = true
+            axios
+                .request({
+                    url: "/member/members/"+this.currentId,
+                    method: "delete"
+                })
+                .then(res => {
+                    this.$Message.success('删除成功')
+                    this.getVipList()
+                });
         },
         changeVipDate(t) {
             //改变会员有效日期
