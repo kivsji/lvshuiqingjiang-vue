@@ -30,6 +30,16 @@
                 </row>
                 <row style="margin-top:20px;">
                     <i-col span='4' style="line-height:30px;">
+                        标签
+                    </i-col>
+                    <i-col span='20'>
+                        <Select v-model="vipData.tags" style="width:200px">
+                            <Option v-for="item in tagList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                        </Select>
+                    </i-col>
+                </row>
+                <row style="margin-top:20px;">
+                    <i-col span='4' style="line-height:30px;">
                         可用积分
                     </i-col>
                     <i-col span='20'>
@@ -73,6 +83,8 @@ export default {
             deleteShow:false,
             dataTitle: "新增会员",
             isNew: false,
+
+            tagList:[],
             currentId: "",
             currentName:'',
             vipData: {
@@ -80,6 +92,7 @@ export default {
                 fan_id: "",
                 card_id: "",
                 mobile: "",
+                tags:[],
                 integral: 0,
                 money: 0,
                 deadline: "" //结束日期
@@ -174,6 +187,7 @@ export default {
                 fan_id: "",
                 card_id: "",
                 mobile: "",
+                tags:[],
                 integral: 0,
                 money: 0,
                 deadline: ""
@@ -227,6 +241,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
+                            tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
                         }
@@ -244,6 +259,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
+                            tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
                         }
