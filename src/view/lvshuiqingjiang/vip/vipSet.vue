@@ -118,7 +118,6 @@ export default {
                 })
                 .then(res => {
                     // console.log(res);
-                        console.log(res);
                     this.vipSetData = {
                         status: res.setting.status,
                         scale: res.setting.scale,

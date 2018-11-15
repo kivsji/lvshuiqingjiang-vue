@@ -33,7 +33,7 @@
                         标签
                     </i-col>
                     <i-col span='20'>
-                        <Select v-model="vipData.tags" style="width:200px">
+                        <Select v-model="currentTag" style="width:200px" multiple>
                             <Option v-for="item in tagList" :value="item.id" :key="item.id">{{ item.name }}</Option>
                         </Select>
                     </i-col>
@@ -87,6 +87,8 @@ export default {
             tagList:[],
             currentId: "",
             currentName:'',
+            oldTag:[],
+            currentTag:[],
             vipData: {
                 name: "",
                 fan_id: "",
@@ -142,7 +144,12 @@ export default {
                                             this.cancelInput(true)
                                             this.isNew = false
                                             this.vipData = params.row
+                                            this.currentTag = []
+                                            for(let i=0;i<params.row.tags.length;i++){
+                                                this.currentTag.push(params.row.tags[i].id)
+                                            }
                                             this.currentId = params.row.id
+                                            this.oldTag = params.row.tags
                                             this.vipData.money = parseFloat(this.vipData.money)
                                         }
                                     }
@@ -163,9 +170,7 @@ export default {
                                     nativeOn: {
                                         click: () => {
                                             this.deleteModal(true)
-                                            
                                             this.currentId = params.row.id
-                                            console.log(this.currentId);
                                             this.currentName = params.row.name
                                         }
                                     }
@@ -180,8 +185,19 @@ export default {
         };
     },
     methods: {
+        getTag() {
+            axios
+                .request({
+                    url: "member/tags",
+                    method: "get"
+                })
+                .then(res => {
+                    this.tagList = res.data;
+                });
+        },
         newData(){
             this.isNew = true
+            this.oldTag = []
             this.vipData = {
                 name: "",
                 fan_id: "",
@@ -241,7 +257,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
-                            tags:this.vipData.tags,
+                            // tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
                         }
@@ -251,6 +267,28 @@ export default {
                     });
             } else {
                 //修改
+                let diff = this.returnTag(this.oldTag,this.currentTag)
+                for(let i=0;i<diff.oldDiff.length;i++){
+                    axios.request({
+                        url:'member/members/add-tag',
+                        method:'post',
+                        data:{
+                            member_id:this.currentId,
+                            tag_Id:diff.oldDiff[i]
+                        }
+                    })
+                }
+                for(let i=0;i<diff.newDiff.length;i++){
+                    axios.request({
+                        url:'member/members/delete-tag',
+                        method:'post',
+                        data:{
+                            member_id:this.currentId,
+                            tag_Id:diff.newDiff[i]
+                        }
+                    })
+                }
+                
                 axios
                     .request({
                         url: "/member/members/"+this.vipData.id,
@@ -259,7 +297,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
-                            tags:this.vipData.tags,
+                            // tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
                         }
@@ -269,6 +307,30 @@ export default {
                     });
             }
         },
+        returnTag(oldData,newData){
+            //新旧数组对比
+            let allArr = []
+            let oldArr = []
+            let newArr = []
+
+            allArr = oldData.concat(newData) //新旧组合并
+            function oldContain(value){
+                //找出旧数组缺省元素
+                return oldData.indexOf(value)==-1
+            }
+            function newContain(value){
+                //找出旧数组缺省元素
+                return newData.indexOf(value)==-1
+            }
+            oldArr = allArr.filter(oldContain)
+            newArr = allArr.filter(newContain)
+            let diff = {
+                oldDiff: oldArr,
+                newDiff: newArr
+            }
+            return diff
+        },
+        
         deleteVip(){
             //删除会员
             this.spinShow = true
@@ -289,6 +351,7 @@ export default {
     },
     mounted() {
         this.getVipList();
+        this.getTag()
     }
 };
 </script>
