@@ -107,7 +107,7 @@ export default {
             activeType: "免费",
             activeData: {
                 image:
-                    "http://img1.imgtn.bdimg.com/it/u=371772476,1548437417&fm=26&gp=0.jpg",
+                    "",
                 title: "",
                 content: "",
                 activeDate: ["2018-11-07", "2018-12-05"],

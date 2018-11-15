@@ -68,7 +68,7 @@ export default [
             name: 'vipMoney',
             meta: {
               title: 'VIP充值设置',
-              icon: 'ios-settings-outline'
+              icon: 'logo-yen'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipMoney.vue')
           },{
@@ -76,7 +76,7 @@ export default [
             name: 'vipTag',
             meta: {
               title: 'VIP标签',
-              icon: 'ios-settings-outline'
+              icon: 'ios-pricetag-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipTag.vue')
           }
