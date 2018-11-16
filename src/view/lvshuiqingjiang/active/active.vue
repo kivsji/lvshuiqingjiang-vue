@@ -87,6 +87,9 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="peopleModal" title='报名名单' @on-ok="cancelPeople(false)" @on-cancel="cancelPeople(false)">
+            <i-table size="large" :columns="peopleColunm" :data="peopleList"></i-table>
+        </Modal>
     </div>
 </template>
 
@@ -102,6 +105,7 @@ export default {
             currentPage:1,
             dataModal: false,
             isNew: false,
+            peopleModal:false,
             currentId: "",
             dataTitle: "新增活动",
             activeType: "免费",
@@ -211,7 +215,10 @@ export default {
                                             "font-size:12px;margin-left:10px;"
                                     },
                                     nativeOn: {
-                                        click: () => {}
+                                        click: () => {
+                                            this.currentId = params.row.id
+                                            this.getActivePeople()
+                                        }
                                     }
                                 },
                                 "查看报名列表"
@@ -229,7 +236,44 @@ export default {
                     signEndTime: "2018-11-08",
                     status: "1"
                 }
-            ]
+            ],
+            peopleColunm:[
+                {
+                    title:'报名人',
+                    key:'nickname'
+                },{
+                    title:'联系人',
+                    render: (h, params) => {
+                        return h("div", [
+                            h(
+                                "p",
+                                {
+                                    attrs: {
+                                        
+                                    }
+                                },
+                                params.row.pivot.name
+                            )
+                        ]);
+                    }
+                },{
+                    title:'联系电话',
+                    render: (h, params) => {
+                        return h("div", [
+                            h(
+                                "p",
+                                {
+                                    attrs: {
+                                        
+                                    }
+                                },
+                                params.row.pivot.contact_way
+                            )
+                        ]);
+                    }
+                }
+            ],
+            peopleList:[]
         };
     },
     methods: {
@@ -250,6 +294,9 @@ export default {
                 money: 0
             };
             this.cancelInput(true);
+        },
+        cancelPeople(i){
+            this.peopleModal = i
         },
         cancelInput(i) {
             //打开活动Modal
@@ -337,7 +384,18 @@ export default {
                 this.activeData.type = 1;
             }
         },
-
+        //查看报名人员
+        getActivePeople(){
+            this.spinShow = true
+            axios.request({
+                url:'activity/activitys/'+this.currentId,
+                method:'get'
+            }).then(res=>{
+                this.spinShow = false
+                this.cancelPeople(true)
+                this.peopleList = res.data.fans
+            })
+        },
         //上传事件
         successUpload(file) {},
         beforeUpload(file) {}

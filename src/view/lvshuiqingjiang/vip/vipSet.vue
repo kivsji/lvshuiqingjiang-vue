@@ -44,17 +44,26 @@
             </i-col> -->
                 <i-col span='24'>
                     <row>
+
                         <i-col span='2' style="line-height:30px;text-align:center;">会员折扣:</i-col>
-                        <i-col span='5'>
-                            <Input v-model="vipSetData.offer[0].full">
-                            <span slot="prepend">满</span>
-                            </Input>
+                        <i-col span='1'>
+                            <Button icon="md-add" type="primary" shape="circle" @click="addOffer()"></Button>
                         </i-col>
-                        <i-col span='5' offset='2'>
-                            <Input v-model="vipSetData.offer[0].reduction">
-                            <span slot="prepend">减</span>
-                            </Input>
+                        <i-col span='10'>
+                            <row v-for='(item,index) in vipSetData.offer' :key='index' style="margin-bottom:10px;">
+                                <i-col span='11'>
+                                    <Input v-model="item.full">
+                                    <span slot="prepend">满</span>
+                                    </Input>
+                                </i-col>
+                                <i-col span='11' offset='2'>
+                                    <Input v-model="item.reduction">
+                                    <span slot="prepend">减</span>
+                                    </Input>
+                                </i-col>
+                            </row>
                         </i-col>
+
                     </row>
                 </i-col>
             </row>
@@ -108,6 +117,16 @@ export default {
         };
     },
     methods: {
+        addOffer() {
+            this.vipSetData.offer.push({
+                full: "",
+                reduction: ""
+            });
+            this.vipSetData.offer_status = 0;
+            this.vipSetData.offer_status = 1;
+            // this.$set(this.vipSetData.offer[this.vipSetData.offer.length-1],'full', '0')
+            // this.$set(this.vipSetData.offer[this.vipSetData.offer.length-1],'reduction', '0')
+        },
         getVipSet() {
             this.spinShow = true;
             //获取会员设置
@@ -122,20 +141,29 @@ export default {
                         status: res.setting.status,
                         scale: res.setting.scale,
                         offer_status: res.setting.offer_status,
-                        auto_status: res.setting.auto_status,
-                    }
+                        auto_status: res.setting.auto_status
+                    };
+                    this.vipSetData.offer = [];
+
                     if (this.vipSetData.offer_status === 1) {
-                        this.vipSetData.offer = [{
-                            full:'',
-                            reduction:''
-                        }]
-                        this.vipSetData.offer[0].full = res.setting.offer[0].condition;
-                        this.vipSetData.offer[0].reduction = res.setting.offer[0].discount;
+                        for (let i = 0; i < res.setting.offer.length; i++) {
+                            this.vipSetData.offer.push({
+                                full: "",
+                                reduction: ""
+                            });
+                            this.vipSetData.offer[i].full =
+                                res.setting.offer[i].condition;
+                            this.vipSetData.offer[i].reduction =
+                                res.setting.offer[i].discount;
+                        }
                     } else if (this.vipSetData.offer_status === 2) {
-                        this.vipSetData.offer = [{
-                            discount:''
-                        }]
-                        this.vipSetData.offer[0].discount = res.setting.offer[0].discount;
+                        this.vipSetData.offer = [
+                            {
+                                discount: ""
+                            }
+                        ];
+                        this.vipSetData.offer[0].discount =
+                            res.setting.offer[0].discount;
                     } else {
                         this.vipSetData.offer = [
                             {
@@ -145,46 +173,50 @@ export default {
                             }
                         ];
                     }
+
                     this.spinShow = false;
-                    
-                    
                 });
         },
         inputVipSet() {
             let offerr = [];
-            if (this.vipSetData.offer_status === 1) {
-                if (
-                    this.vipSetData.offer[0].full === "" ||
-                    this.vipSetData.offer[0].reduction === ""
-                ) {
-                    this.$Message.error("满减规则不完整");
-                    return;
-                }
-                offerr = [
-                    {
-                        condition: this.vipSetData.offer[0].full,
-                        discount: this.vipSetData.offer[0].reduction
+            for (let i = 0; i < this.vipSetData.offer.length; i++) {
+                if (this.vipSetData.offer_status === 1) {
+                    if (
+                        this.vipSetData.offer[i].full === "" ||
+                        this.vipSetData.offer[i].reduction === "" ||
+                        this.vipSetData.offer[i].full === undefined ||
+                        this.vipSetData.offer[i].reduction === undefined
+                    ) {
+                        this.$Message.error("满减规则不完整");
+                        return;
                     }
-                ];
-            } else if (this.vipSetData.offer_status === 2) {
-                if (this.vipSetData.offer[0].discount === "") {
-                    this.$Message.error("折扣规则不完整");
-                    return;
-                }
-                // this.vipSetData.offer
-                offerr = [
-                    {
-                        discount: this.vipSetData.offer[0].discount
+                    offerr.push({
+                        condition: this.vipSetData.offer[i].full,
+                        discount: this.vipSetData.offer[i].reduction
+                    });
+                } else if (this.vipSetData.offer_status === 2) {
+                    if (
+                        this.vipSetData.offer[0].discount === "" ||
+                        this.vipSetData.offer[0].discount === undefined
+                    ) {
+                        this.$Message.error("折扣规则不完整");
+                        return;
                     }
-                ];
-            } else {
-                offerr = [];
+                    offerr = [
+                        {
+                            discount: this.vipSetData.offer[0].discount
+                        }
+                    ];
+                } else {
+                    offerr = [];
+                }
             }
+
             this.spinShow = true;
             axios
                 .request({
-                    url: "/member/settings",
-                    method: "post",
+                    url: "/member/settings/1",
+                    method: "put",
                     data: {
                         status: this.vipSetData.status,
                         scale: this.vipSetData.scale,

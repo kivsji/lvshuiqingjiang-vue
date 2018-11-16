@@ -106,6 +106,14 @@ export default [
               icon: 'ios-cube-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/shop/shopDefail.vue')
+          }, {
+            path: '/shopSwipe',
+            name: 'shopSwipe',
+            meta: {
+              title: '商城轮播',
+              icon: 'ios-cube-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/shop/shopSwipe.vue')
           }
         ],
         component: () => import('@/view/lvshuiqingjiang/shop/shop.vue')

@@ -32,8 +32,15 @@
                 <i-col span='4' style="line-height:30px;">
                     分类封面
                 </i-col>
-                <i-col span='20'>
-                    <Input v-model="typeData.img_url" />
+                <i-col>
+                    <Spin fix v-if="spinShow1">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>上传中~~~</div>
+                    </Spin>
+                    <Upload style="margin-bottom:10px;" action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                    <img :src="typeData.img_url" width="200px">
                 </i-col>
             </row>
             <Modal v-model="deleteModal" title='删除' @on-ok="deleteType()" @on-cancel="deleteShow(false)">
@@ -49,7 +56,9 @@ import Cookies from "js-cookie";
 export default {
     data() {
         return {
+            isUpload:false,
             spinShow: false,
+            spinShow1:false,
             isNew: false,
             currentId: "",
             dataModal: false,
@@ -68,7 +77,20 @@ export default {
                 },
                 {
                     title: "分类封面",
-                    key: "img_url"
+                    render: (h, params) => {
+                        return h("div", [
+                            h(
+                                "img",
+                                {
+                                    attrs: {
+                                        style:'width:50px;height:50px;display:block;',
+                                        src:  params.row.img_url
+                                    }
+                                },
+                                ''
+                            )
+                        ]);
+                    }
                 },
                 {
                     title: "编辑",
@@ -114,6 +136,38 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
+                                            //拦截错误删除
+                                            let currentSid = params.row.id;
+                                            for (
+                                                let i = 0;
+                                                i < this.typeList.length;
+                                                i++
+                                            ) {
+                                                if (
+                                                    this.typeList[i].sid ===
+                                                    currentSid
+                                                ) {
+                                                    console.log(
+                                                        this.typeList[i].sid
+                                                    );
+                                                    console.log(currentSid);
+
+                                                    this.$Message.error(
+                                                        "分类底下有子分类需手动删除"
+                                                    );
+                                                    return;
+                                                }
+                                            }
+                                            if (
+                                                params.row.sid !== 0 &&
+                                                params.row.goods_count > 0
+                                            ) {
+                                                this.$Message.error(
+                                                    "分类底下有产品需手动删除"
+                                                );
+                                                return;
+                                            }
+
                                             this.deleteTypeName =
                                                 params.row.name;
                                             this.currentId = params.row.id;
@@ -136,6 +190,23 @@ export default {
         };
     },
     methods: {
+        successUpload(file){
+            this.spinShow1 = false;
+            if (this.typeData.img_url !== "") {
+                axios.request({
+                    url: "qiniu/delete",
+                    method: "post",
+                    data: {
+                        url: this.typeData.img_url
+                    }
+                });
+            }
+            this.isUpload = true
+            this.typeData.img_url = file.url
+        },
+        beforeUpload(){
+            
+        },
         newData() {
             this.typeShow(true);
             this.isNew = true;
@@ -150,6 +221,17 @@ export default {
             this.deleteModal = i;
         },
         typeShow(i) {
+            if(this.isUpload){
+                axios.request({
+                    url: "qiniu/delete",
+                    method: "post",
+                    data: {
+                        url: this.typeData.img_url
+                    }
+                }).then(res=>{
+                    this.isUpload = false
+                });
+            }
             this.dataModal = i;
         },
         getType() {
@@ -180,6 +262,10 @@ export default {
                 });
         },
         inputType() {
+            if(this.typeData.name === '' || this.typeData.sid === ''){
+                this.$Message.error('分类资料不完整')
+                return
+            }
             this.spinShow = true;
             if (this.isNew) {
                 //新建
@@ -230,6 +316,13 @@ export default {
     },
     mounted() {
         this.getType();
+    },
+    computed: {
+        headers() {
+            return {
+                token: Cookies.get("token")
+            };
+        }
     }
 };
 </script>
