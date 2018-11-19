@@ -18,7 +18,7 @@
                     活动封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="http://localhost:8000/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="http://localhost:8000/lvshui/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
@@ -83,7 +83,7 @@
                     报名金额
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="activeData.money" :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
+                    <InputNumber v-model="activeData.money" :min="0.00" :precision='2' :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
         </Modal>

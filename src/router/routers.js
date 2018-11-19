@@ -17,7 +17,8 @@ export default [
     name: 'login',
     meta: {
       title: 'Login - 登录',
-      hideInMenu: true
+      hideInMenu: true,
+      notCache:true
     },
     component: () => import('@/view/login/login.vue')
   },
