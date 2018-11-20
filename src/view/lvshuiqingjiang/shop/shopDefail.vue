@@ -50,9 +50,9 @@
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
-                <i-col span='24' style="display:block;margin:0 auto;">
-                    <img :src="goodData.imgs" width="100%">
-                </i-col>
+                <!-- <i-col span='24' style="display:block;margin:0 auto;">
+                    <img :src="goodData.imgs[0]" width="100%">
+                </i-col> -->
             </row>
             <row style="margin-top:20px;">
                 <i-col span='4' style="line-height:30px;">
@@ -115,9 +115,12 @@
                     已售
                 </i-col>
                 <i-col span='20'>
-                    <Input v-model="goodData.monthly_sales" />
+                    <InputNumber v-model="goodData.monthly_sales" :min="0" :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
+        </Modal>
+        <Modal v-model="deleteModal" title='删除' @on-ok="deleteGood()" @on-cancel="deleteShow(false)">
+            是否删除商品 <span style='color:red'>{{deleteGoodName}}</span>
         </Modal>
     </div>
 </template>
@@ -139,7 +142,7 @@ export default {
             dataTitle: "新增商品",
             goodDiscountDate: [],
             goodData: {
-                imgs: ['123','345'],
+                imgs: [],
                 nav_id: "",
                 name: "",
                 type: "general",
@@ -148,11 +151,14 @@ export default {
                 limit: 0,
                 price: 0,
                 discount: 0,
-                monthly_sales: "0",
+                monthly_sales: 0,
                 is_up: 1,
                 sratr_date: "",
                 end_date: ""
             },
+            //删除框
+            deleteModal: false,
+            deleteGoodName: "",
 
             currentId: "",
             typeList: [],
@@ -199,7 +205,26 @@ export default {
                 },
                 {
                     title: "上架",
-                    key: "is_up"
+                    // key: "is_up"
+                    render: (h, params) => {
+                        var self = this;
+                        return h(
+                            "i-switch",
+                            {
+                                props: {
+                                    trueValue: 1,
+                                    falseValue: 0,
+                                    value: params.row.is_up
+                                },
+                                nativeOn: {
+                                    click: () => {
+                                        this.change(params.row.is_up,params.row.id);
+                                    }
+                                }
+                            },
+                            0
+                        );
+                    }
                 },
                 {
                     title: "操作",
@@ -220,30 +245,50 @@ export default {
                                             this.currentId = params.row.id;
                                             this.dataTitle = "修改";
                                             this.isNew = false;
+                                            this.goodData.imgs = []
+                                            for(let i=0;i<params.row.imgs.length;i++){
+                                                this.goodData.imgs.push(params.row.imgs[0].url) 
+                                            }
+                                            this.goodData.nav_id = params.row.nav_id
+                                            console.log(params.row.nav_id);
+                                            
+                                            this.goodData.name = params.row.name
+                                            this.goodData.type = params.row.type
+                                            this.goodData.content = params.row.content
+                                            this.goodData.total = params.row.total
+                                            this.goodData.limit = params.row.limit
+                                            this.goodData.price = params.row.price
+                                            this.goodData.discount = params.row.discount
+                                            this.goodData.monthly_sales = params.row.monthly_sales
+                                            this.goodData.is_up = params.row.is_up
+                                            this.goodDiscountDate = [params.row.sratr_date,params.row.end_date]
+                                            this.openGoodModal(true)
                                         }
                                     }
                                 },
                                 "编辑"
                             ),
-                            h(
-                                "Button",
-                                {
-                                    props: {
-                                        type: "error",
-                                        size: "small"
-                                    },
-                                    attrs: {
-                                        style:
-                                            "font-size:12px;margin-left:10px;"
-                                    },
-                                    nativeOn: {
-                                        click: () => {
-                                            this.currentId = params.row.id;
-                                        }
-                                    }
-                                },
-                                "删除"
-                            )
+                            // h(
+                            //     "Button",
+                            //     {
+                            //         props: {
+                            //             type: "error",
+                            //             size: "small"
+                            //         },
+                            //         attrs: {
+                            //             style:
+                            //                 "font-size:12px;margin-left:10px;"
+                            //         },
+                            //         nativeOn: {
+                            //             click: () => {
+                            //                 this.currentId = params.row.id;
+                            //                 this.deleteGoodName = params.row.name
+                            //                 this.deleteShow(true)
+                            //             }
+                            //         }
+                            //     },
+                            //     "删除"
+                            // )
                         ]);
                     }
                 }
@@ -252,12 +297,24 @@ export default {
     },
     methods: {
         //change上架事件
-        change() {},
+        change(is,id) {
+            this.spinShow = true;
+            axios.request({
+                url:'mall-goods/'+ id +'/change',
+                method:'post',
+                data:{
+                    is_up:!is
+                }
+            }).then(res=>{
+                this.$Message.success('修改成功')
+                this.getGoodLost()
+            })
+        },
         //日期修改事件
         changeGoodDate() {},
         //上传事件
         successUpload(file) {
-            this.goodData.imgs.push(file.url)
+            this.goodData.imgs.push(file.url);
         },
         beforeUpload() {},
         //分页
@@ -320,7 +377,7 @@ export default {
 
         //新建商品
         newData() {
-            this.isNew = true
+            this.isNew = true;
             this.openGoodModal(true);
         },
         //打开商品编辑窗口
@@ -331,8 +388,6 @@ export default {
         inputData() {
             this.spinShow = true;
             if (this.isNew) {
-                console.log(1);
-                
                 axios
                     .request({
                         url: "mall-goods",
@@ -348,16 +403,58 @@ export default {
                             price: this.goodData.price,
                             discount: this.goodData.discount,
                             is_up: this.goodData.is_up,
-                            monthly_sales:this.goodData.monthly_sales,
+                            monthly_sales: this.goodData.monthly_sales,
                             sratr_date: this.goodDiscountDate[0],
                             end_date: this.goodDiscountDate[1]
                         }
                     })
                     .then(res => {
-                        this.getGoodLost()
+                        this.getGoodLost();
                         this.$Message.success("新增成功");
                     });
+            }else{
+                axios
+                    .request({
+                        url: "mall-goods/"+this.currentId,
+                        method: "put",
+                        data: {
+                            imgs: this.goodData.imgs,
+                            nav_id: this.goodData.nav_id,
+                            name: this.goodData.name,
+                            type: this.goodData.type,
+                            content: this.goodData.content,
+                            total: this.goodData.total,
+                            limit: this.goodData.limit,
+                            price: this.goodData.price,
+                            discount: this.goodData.discount,
+                            is_up: this.goodData.is_up,
+                            monthly_sales: this.goodData.monthly_sales,
+                            sratr_date: this.goodDiscountDate[0],
+                            end_date: this.goodDiscountDate[1]
+                        }
+                    })
+                    .then(res => {
+                        this.getGoodLost();
+                        this.$Message.success("修改成功");
+                    });
             }
+        },
+
+        //删除商品
+        deleteGood() {
+            this.spinShow = true;
+            axios
+                .request({
+                    url: "mall-goods/" + this.currentId,
+                    method: "delete"
+                })
+                .then(res => {
+                    this.$Message.success('删除成功')
+                    this.getGoodLost();
+                });
+        },
+        deleteShow(i) {
+            this.deleteModal = i;
         }
     },
     mounted() {

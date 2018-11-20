@@ -254,8 +254,6 @@ export default {
                                     method: "get"
                                 })
                                 .then(res => {
-                                    console.log(res);
-                                    
                                     this.defaultList = res.data[0].swipers;
                                     if (this.defaultList === null) {
                                         this.defaultList = [{},{}];
