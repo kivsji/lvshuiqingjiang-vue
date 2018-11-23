@@ -39,6 +39,14 @@ export default [
           icon: 'ios-browsers-outline'
         },
         component: () => import('@/view/lvshuiqingjiang/active/active.vue')
+      },{
+        path: 'customActive',
+        name: 'customActive',
+        meta: {
+          title: '个性定制',
+          icon: 'ios-browsers-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/active/activeDetail.vue')
       },
       {
         path: 'vip',

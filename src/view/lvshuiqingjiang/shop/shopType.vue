@@ -37,7 +37,7 @@
                         <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
                         <div>上传中~~~</div>
                     </Spin>
-                    <Upload style="margin-bottom:10px;" action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                     <img :src="typeData.img_url" width="200px">
