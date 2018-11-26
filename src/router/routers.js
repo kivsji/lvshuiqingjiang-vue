@@ -24,7 +24,7 @@ export default [
   },
   {
     path: '/',
-    name: '功能',
+    name: 'power',
     component: Main,
     redirect: '/active',
     meta: {
@@ -47,6 +47,14 @@ export default [
           icon: 'ios-browsers-outline'
         },
         component: () => import('@/view/lvshuiqingjiang/active/activeDetail.vue')
+      },{
+        path: 'activeShare',
+        name: 'activeShare',
+        meta: {
+          title: '活动分享',
+          icon: 'ios-browsers-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/active/activeShare.vue')
       },
       {
         path: 'vip',

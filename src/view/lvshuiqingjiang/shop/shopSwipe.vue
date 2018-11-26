@@ -217,7 +217,7 @@ export default {
         getSwipeType(){
             axios
                 .request({
-                    url: "mall-parameter/",
+                    url: "mall-parameter",
                     method: "get"
                 })
                 .then(res => {

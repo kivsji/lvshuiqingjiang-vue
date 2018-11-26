@@ -36,13 +36,15 @@ export default {
           username,
           password
         }).then(res => {
+          console.log(123);
+          console.log(res);
+          
           const data = res.data
           commit('setToken', res.token)
-          Cookies.set('token', res.data.token)
+          Cookies.set('token', res.token)
           localStorage.setItem('token',res.token)
           resolve()
         }).catch(err => {
-          console.log(err);
           reject(err)
         })
       })
