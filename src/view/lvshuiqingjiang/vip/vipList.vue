@@ -9,7 +9,7 @@
                 <Page :total="total" :page-size="pre_page" />
             </i-col>
             <i-col>
-                <i-table size="large" style="min-width:1200px;" :columns="vipColunm" :data="vipList"></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="vipColunm" :data="vipList"></i-table>
             </i-col>
             <Modal v-model="dataModal" :title='dataTitle' @on-ok="inputVipData" @on-cancel="cancleWindow()">
                 <row style="margin-top:20px;">

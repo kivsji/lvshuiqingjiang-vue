@@ -9,7 +9,7 @@
                 <!-- <Page :total="total" :page-size="pre_page" :on-change='changePage' /> -->
             </i-col>
             <i-col>
-                <i-table size="large" style="min-width:1200px;" :columns="memberColunm" :data="memberList"></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="memberColunm" :data="memberList"></i-table>
             </i-col>
         </row>
         <Modal v-model="activeModal" title='活动分享设置' @on-ok="inputSet()" @on-cancel="cancelActive(false)">

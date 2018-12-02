@@ -8,7 +8,7 @@
                 <Page :total="total" :page-size="per_page" @on-change='changePage'/>
             </i-col>
             <i-col style="margin-top:20px;">
-                <i-table style="min-width:1200px;" :columns="receivedColumn" :data="receivedData"></i-table>
+                <i-table style="min-width:px;" :columns="receivedColumn" :data="receivedData"></i-table>
             </i-col>
         </row>
         <Modal v-model="newModal" :title="reviewTitle" @on-ok="newTag" @on-cancel="openNew(false)">

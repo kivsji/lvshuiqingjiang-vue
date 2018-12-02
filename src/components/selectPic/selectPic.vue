@@ -1,13 +1,13 @@
 <template>
     <div>
-        <Modal v-model="selectModal" style="overflow:hidden;" width='1200px' height='500px' title="选择图片" @on-ok="returnSelect()" @on-cancel="closeModal">
+        <Modal v-model="selectModal" style="overflow:hidden;" width='800px' height='500px' title="选择图片" @on-ok="returnSelect()" @on-cancel="closeModal">
             <i-col>
                 <matterSearch @listenToparent='returnMatterSearch' :index='index' ref="matterSearch"></matterSearch>
             </i-col>
             <i-col>
                 已添加：
             </i-col>
-            <i-col style="width:1200px;height:400px;">
+            <i-col style="width:800px;height:400px;">
                 <div style="width:540px;height:400px;float:left;overflow-y:scroll;">
                     <div v-for='(item,index) in selectList' style="border:1px solid #eee;width:250px;height:250px;float:left;overflow:hidden;position:relative;">
                         <span @click.stop="removePic(index)" style="position:absolute;margin-top:0;margin:left;background:#aaa;color:#fff;display:block;width:20px;height:20px;line-height:20px;text-align:center;cursor: pointer">

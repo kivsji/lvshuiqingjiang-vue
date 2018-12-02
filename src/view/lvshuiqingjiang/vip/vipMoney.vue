@@ -6,7 +6,7 @@
                 <Button type='primary' @click='newData()'>新建规则</Button>
             </i-col>
             <i-col span='24' style="margin-top:10px;">
-                <i-table size="large" style="min-width:1200px;" :columns="vipColunm" :data="vipList"></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="vipColunm" :data="vipList"></i-table>
             </i-col>
         </row>
         <Modal v-model="moneyModal" :title='dataTitle' @on-ok="inputData" @on-cancel="moneyShow(false)">

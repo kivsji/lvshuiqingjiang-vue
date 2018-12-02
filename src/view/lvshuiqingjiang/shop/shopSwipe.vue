@@ -26,7 +26,7 @@
         <Modal v-model="groundPic" title="编辑轮播组图片" @on-ok="" @on-cancel="openGroundPic(false)">
             <row>
                 <i-col>
-                    <Upload action="https://www.rdoorweb.com/qiniu/upload" :on-success='successUpload' :on-preview='previewUpload' :show-upload-list='false' :default-file-list="defaultList" :headers="headers">
+                    <Upload action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload' :on-preview='previewUpload' :show-upload-list='false' :default-file-list="defaultList" :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>

@@ -6,7 +6,7 @@
                 <Button type='primary' @click='newData()'>新建分类</Button>
             </i-col>
             <i-col style="margin-bottom:10px;">
-                <i-table size="large" style="min-width:1200px;" :columns="typeColunm" :data="typeList"></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="typeColunm" :data="typeList"></i-table>
             </i-col>
         </row>
         <Modal v-model="dataModal" :title='dataTitle' @on-ok="inputType()" @on-cancel="typeShow(false)">

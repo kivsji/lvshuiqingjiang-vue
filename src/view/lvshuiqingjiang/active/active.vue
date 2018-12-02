@@ -9,7 +9,7 @@
                 <Page :total="total" :page-size="pre_page" :on-change='changePage' />
             </i-col>
             <i-col>
-                <i-table size="large" style="min-width:1200px;" :columns="activeColunm" :data="activeList"></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="activeColunm" :data="activeList"></i-table>
             </i-col>
         </row>
         <Modal v-model="dataModal" :title='dataTitle' @on-ok="okInput" @on-cancel="cancelInput(false)">
