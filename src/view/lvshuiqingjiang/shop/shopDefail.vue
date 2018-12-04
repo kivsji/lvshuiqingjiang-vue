@@ -362,8 +362,23 @@ export default {
             goodsList: [],
             goodsColunm: [
                 {
+                    title:'商品ID',
+                    key: "id"
+                },
+                {
                     title: "商品名",
-                    key: "name"
+                    // key: "name",
+                    render: (h, params) => {
+                        return h(
+                            "p",
+                            {
+                                attrs: {
+                                    style:'overflow: hidden;text-overflow:ellipsis;white-space: nowrap;'
+                                }
+                            },
+                            params.row.name
+                        );
+                    }
                 },
                 {
                     title: "商品类型",
