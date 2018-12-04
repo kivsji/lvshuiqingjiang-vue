@@ -17,7 +17,7 @@ fs.writeFileSync(path.join(__dirname, './config/env.js'), `export default '${env
 // 例如：https://www.foobar.com/my-app/
 // 需要将它改为'/my-app/'
 // const BASE_URL = '/'
-const BASE_URL = '/pp'
+const BASE_URL = '/backend'
 
 module.exports = {
   // Project deployment base
@@ -28,7 +28,7 @@ module.exports = {
   // https://www.foobar.com/my-app/
   // then change this to '/my-app/'
   baseUrl: BASE_URL,
-  outputDir: '../../www.rdoorweb.com/public/pp',
+//   outputDir: '../../www.rdoorweb.com/public/pp',
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
   chainWebpack: config => {
