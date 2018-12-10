@@ -127,7 +127,7 @@
                 </i-col>
                 <i-col span='20'>
                     <InputNumber
-                        v-model="goodData.total"
+                        v-model="goodData.stock"
                         :min="0"
                         :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
                         :parser="value => value.replace(/$s?|(,*)/g, '')"
@@ -345,6 +345,7 @@ export default {
                 discount: 0,
                 monthly_sales: 0,
                 is_up: 1,
+                stock:0,
                 sratr_date: "",
                 end_date: ""
             },
@@ -670,7 +671,7 @@ export default {
                             name: this.goodData.name,
                             type: this.goodData.type,
                             content: this.goodData.content,
-                            total: this.goodData.total,
+                            stock: this.goodData.stock,
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             discount: this.goodData.discount,
@@ -695,7 +696,7 @@ export default {
                             name: this.goodData.name,
                             type: this.goodData.type,
                             content: this.goodData.content,
-                            total: this.goodData.total,
+                            stock: this.goodData.stock,
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             discount: this.goodData.discount,
