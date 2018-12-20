@@ -18,7 +18,7 @@ export default [
     meta: {
       title: 'Login - 登录',
       hideInMenu: true,
-      notCache:true
+      notCache: true
     },
     component: () => import('@/view/login/login.vue')
   },
@@ -32,6 +32,14 @@ export default [
     },
     children: [
       {
+        path: 'menu',
+        name: 'menu',
+        meta: {
+          title: '菜单设置',
+          icon: 'ios-browsers-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/menu/menu.vue')
+      },{
         path: 'active',
         name: 'active',
         meta: {
@@ -39,7 +47,7 @@ export default [
           icon: 'ios-browsers-outline'
         },
         component: () => import('@/view/lvshuiqingjiang/active/active.vue')
-      },{
+      }, {
         path: 'customActive',
         name: 'customActive',
         meta: {
@@ -47,7 +55,7 @@ export default [
           icon: 'ios-browsers-outline'
         },
         component: () => import('@/view/lvshuiqingjiang/active/activeDetail.vue')
-      },{
+      }, {
         path: 'activeShare',
         name: 'activeShare',
         meta: {
@@ -63,7 +71,7 @@ export default [
           title: 'vip管理',
           icon: 'ios-person'
         },
-        children:[
+        children: [
           {
             path: '/vipList',
             name: 'vipList',
@@ -72,7 +80,7 @@ export default [
               icon: 'ios-list-box-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipList.vue')
-          },{
+          }, {
             path: '/vipSet',
             name: 'vipSet',
             meta: {
@@ -80,7 +88,7 @@ export default [
               icon: 'ios-settings-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipSet.vue')
-          },{
+          }, {
             path: '/vipMoney',
             name: 'vipMoney',
             meta: {
@@ -88,7 +96,7 @@ export default [
               icon: 'logo-yen'
             },
             component: () => import('@/view/lvshuiqingjiang/vip/vipMoney.vue')
-          },{
+          }, {
             path: '/vipTag',
             name: 'vipTag',
             meta: {
@@ -131,9 +139,36 @@ export default [
               icon: 'ios-cube-outline'
             },
             component: () => import('@/view/lvshuiqingjiang/shop/shopSwipe.vue')
-          }
+          }, {
+            path: '/shopSet',
+            name: 'shopSet',
+            meta: {
+              title: '商城设置',
+              icon: 'ios-apps-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/shop/shopSet.vue')
+          },
         ],
         component: () => import('@/view/lvshuiqingjiang/shop/shop.vue')
+      }, {
+        path: 'order',
+        name: 'order',
+        meta: {
+          title: '订单管理',
+          icon: 'ios-cart-outline'
+        },
+        component: () => import('@/view/lvshuiqingjiang/order/order.vue'),
+        children: [
+          {
+            path: '/orderList',
+            name: 'orderList',
+            meta: {
+              title: '订单列表',
+              icon: 'ios-apps-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/order/orderList.vue')
+          }
+        ]
       }
     ],
   }, {

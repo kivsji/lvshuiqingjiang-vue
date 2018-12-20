@@ -75,7 +75,7 @@
                     </Select>
                 </i-col>
             </row>
-            <row style="margin-top:20px;">
+            <!-- <row style="margin-top:20px;">
                 <i-col
                     span='4'
                     style="line-height:30px;"
@@ -89,7 +89,7 @@
                         :false-value='0'
                     />
                 </i-col>
-            </row>
+            </row> -->
             <row style="margin-top:20px;">
                 <i-col
                     span='4'
@@ -344,7 +344,7 @@ export default {
                 price: 0,
                 discount: 0,
                 monthly_sales: 0,
-                is_up: 1,
+                is_up: 0,
                 stock:0,
                 sratr_date: "",
                 end_date: ""
@@ -400,8 +400,8 @@ export default {
                     }
                 },
                 {
-                    title: "总数",
-                    key: "total"
+                    title: "库存",
+                    key: "stock"
                 },
                 {
                     title: "价格",
@@ -432,7 +432,8 @@ export default {
                                     click: () => {
                                         this.change(
                                             params.row.is_up,
-                                            params.row.id
+                                            params.row.id,
+                                            params.row.up_id
                                         );
                                     }
                                 }
@@ -480,8 +481,8 @@ export default {
                                                 params.row.type;
                                             this.goodData.content =
                                                 params.row.content;
-                                            this.goodData.total =
-                                                params.row.total;
+                                            this.goodData.stock =
+                                                params.row.stock;
                                             this.goodData.limit =
                                                 params.row.limit;
                                             this.goodData.price =
@@ -490,8 +491,8 @@ export default {
                                                 params.row.discount;
                                             this.goodData.monthly_sales =
                                                 params.row.monthly_sales;
-                                            this.goodData.is_up =
-                                                params.row.is_up;
+                                            // this.goodData.is_up =
+                                            //     params.row.is_up;
                                             this.goodDiscountDate = [
                                                 params.row.sratr_date,
                                                 params.row.end_date
@@ -572,14 +573,15 @@ export default {
                 });
         },
         //change上架事件
-        change(is, id) {
+        change(is, id, up_id) {
             this.spinShow = true;
             axios
                 .request({
                     url: "mall-goods/" + id + "/change",
                     method: "post",
                     data: {
-                        is_up: !is
+                        is_up: !is,
+                        up_id: up_id
                     }
                 })
                 .then(res => {
@@ -675,7 +677,7 @@ export default {
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             discount: this.goodData.discount,
-                            is_up: this.goodData.is_up,
+                            // is_up: this.goodData.is_up,
                             monthly_sales: this.goodData.monthly_sales,
                             sratr_date: this.goodDiscountDate[0],
                             end_date: this.goodDiscountDate[1]
@@ -700,7 +702,7 @@ export default {
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             discount: this.goodData.discount,
-                            is_up: this.goodData.is_up,
+                            // is_up: this.goodData.is_up,
                             monthly_sales: this.goodData.monthly_sales,
                             sratr_date: this.goodDiscountDate[0],
                             end_date: this.goodDiscountDate[1]
