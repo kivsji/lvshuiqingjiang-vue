@@ -52,7 +52,44 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="editModal" title='奖品编辑' @on-ok="inputEdit()" @on-cancel="cancelEdit(false)">
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    奖品卡券
+                </i-col>
+                <i-col span='20'>
+                    <Select v-model="couponsData.coupon_id" style="width:200px">
+                        <Option v-for="item in couponsList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                    </Select>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    排序等级
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber :min="0" v-model="couponsData.orderby_lev"></InputNumber>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    获得概率
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber :min="0" :max='100-allProbably' v-model="couponsData.probably"></InputNumber>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    奖品数量
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber :min="1" v-model="couponsData.number"></InputNumber>
+                </i-col>
+            </row>
+        </Modal>
         <Modal v-model="peopleModal" width='1000px' title='奖品列表' @on-ok="cancelPeople(false)" @on-cancel="cancelPeople(false)">
+            <Button style="margin-bottom:10px;" type='primary' @click='newEdit()'>新增奖品</Button>
             <i-table size="large" :columns="peopleColunm" :data="prizeList"></i-table>
         </Modal>
     </div>
@@ -64,7 +101,9 @@ import Cookies from "js-cookie";
 export default {
     data() {
         return {
+            allProbably:0,//总概率
             spinShow: false,
+            editModal:false,
             total: 1,
             pre_page: 1,
             currentPage: 1,
@@ -81,6 +120,13 @@ export default {
                 status: 0
             },
             couponsList:[],
+            couponsData:{
+                    coupon_id:'',//奖品卡券id
+                    orderby_lev:0,//排序等级
+                    probably:0,//概率%
+                    number:1//奖品数量 0位无限
+                },
+            currentCouponId:'',
             activeColunm: [
                 {
                     title: "活动名称",
@@ -167,18 +213,11 @@ export default {
                     }
                 }
             ],
-            activeList: [
-                {
-                    coupon_id:'',//奖品卡券id
-                    orderby_lev:'',//排序等级
-                    probably:'',//概率%
-                    number:''//奖品数量 0位无限
-                }
-            ],
+            activeList: [],
             peopleColunm: [
                 {
                     title: "奖品",
-                    key: "coupon_id"
+                    key: "coupon_id",
                 },
                 {
                     title: "排序等级",
@@ -186,10 +225,62 @@ export default {
                 },
                 {
                     title: "概率(%)",
-                    probably:'probably'
+                    key:'probably'
                 },{
                     title: "奖品数量(0 为无限制)",
                     key:'number'
+                },{
+                    title: "操作",
+                    width: 200,
+                    render: (h, params) => {
+                        return h("div", [
+                            h(
+                                "Button",
+                                {
+                                    props: {
+                                        type: "primary",
+                                        size: "small"
+                                    },
+                                    attrs: {
+                                        style: "font-size:12px"
+                                    },
+                                    nativeOn: {
+                                        click: () => {
+                                            this.cancelPeople(false);
+                                            this.cancelEdit(true);
+                                            this.isNew = false;
+                                            this.currentCouponId = params.row.id;
+                                            this.couponsData = {
+                                                coupon_id: params.row.coupon_id,
+                                                orderby_lev: params.row.orderby_lev,
+                                                probably: params.row.probably,
+                                                number: params.row.number
+                                            };
+                                        }
+                                    }
+                                },
+                                "编辑"
+                            ),
+                            h(
+                                "Button",
+                                {
+                                    props: {
+                                        type: "error",
+                                        size: "small"
+                                    },
+                                    attrs: {
+                                        style: "font-size:12px"
+                                    },
+                                    nativeOn: {
+                                        click: () => {
+                                            this.cancelEdit(true);
+                                        }
+                                    }
+                                },
+                                "删除"
+                            )
+                        ]);
+                    }
                 }
             ],
             prizeList: []
@@ -200,6 +291,56 @@ export default {
             this.currentPage = index;
             this.getActive();
         },
+        cancelEdit(i){
+            this.editModal = i
+            if(!i){
+                this.cancelPeople(true)
+            }
+        },
+        newEdit(){
+            this.cancelEdit(true)
+            this.cancelPeople(false)
+            this.couponsData = {
+                coupon_id:'',//奖品卡券id
+                orderby_lev:0,//排序等级
+                probably:0,//概率%
+                number:1//奖品数量 0位无限
+            }
+            this.isNew = true
+        },
+        inputEdit(){
+            if(this.isNew){
+                axios.request({
+                    url:'lottery/prizes',
+                    method:'post',
+                    data:{
+                        activity_id:this.currentId,
+                        coupon_id:this.couponsData.coupon_id,
+                        orderby_lev:this.couponsData.orderby_lev,
+                        probably:this.couponsData.probably,
+                        number:this.couponsData.number
+                    }
+                }).then(res=>{
+                    this.getActivePrize()
+                    this.cancelPeople(true)
+                })
+            }else{
+                axios.request({
+                    url:'lottery/prizes/'+this.currentCouponId,
+                    method:'put',
+                    data:{
+                        activity_id:this.currentId,
+                        coupon_id:this.couponsData.coupon_id,
+                        orderby_lev:this.couponsData.orderby_lev,
+                        probably:this.couponsData.probably,
+                        number:this.couponsData.number
+                    }
+                }).then(res=>{
+                    this.getActivePrize()
+                    this.cancelPeople(true)
+                })
+            }
+        },  
         newData() {
             this.isNew = true;
             this.activeData = {
@@ -290,7 +431,7 @@ export default {
                 this.activeData.type = 1;
             }
         },
-        //查看报名人员
+        //查看奖品列表
         getActivePrize() {
             this.spinShow = true;
             axios
@@ -299,9 +440,13 @@ export default {
                     method: "get"
                 })
                 .then(res => {
+                    this.allProbably = 0
                     this.spinShow = false;
                     this.cancelPeople(true);
                     this.prizeList = res.data;
+                    for(let i=0;i<this.prizeList.length;i++){
+                        this.allProbably += this.prizeList[i].probably
+                    }
                     this.getCoupon()
                 });
         },
@@ -311,7 +456,7 @@ export default {
                 url:'coupon/coupons',
                 method:'get'
             }).then(res=>{
-                this.couponsList = res.data
+                this.couponsList = res.data.data
             })
         },
         //上传事件
