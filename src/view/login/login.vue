@@ -39,7 +39,7 @@ export default {
             this.handleLogin({ username, password })
                 .then(res => {
                     this.$router.push({
-                        path: "/"
+                        path: "/activeManage/active"
                     });
                     console.log(1);
                 })

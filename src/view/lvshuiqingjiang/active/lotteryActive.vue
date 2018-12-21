@@ -92,6 +92,9 @@
             <Button style="margin-bottom:10px;" type='primary' @click='newEdit()'>新增奖品</Button>
             <i-table size="large" :columns="peopleColunm" :data="prizeList"></i-table>
         </Modal>
+        <Modal v-model="deleteModal" title='删除奖品' @on-ok="deleteInput()" @on-cancel="cancelDelete(false)">
+            <p>是否删除此奖品?</p>
+        </Modal>
     </div>
 </template>
 
@@ -104,6 +107,7 @@ export default {
             allProbably:0,//总概率
             spinShow: false,
             editModal:false,
+            deleteModal:false,
             total: 1,
             pre_page: 1,
             currentPage: 1,
@@ -218,6 +222,9 @@ export default {
                 {
                     title: "奖品",
                     key: "coupon_id",
+                    render: (h,params)=>{
+                        return h('p',params.row.coupon.desc)
+                    }
                 },
                 {
                     title: "排序等级",
@@ -250,6 +257,13 @@ export default {
                                             this.cancelEdit(true);
                                             this.isNew = false;
                                             this.currentCouponId = params.row.id;
+                                            //更新概率限制
+                                            this.allProbably = 0
+                                            for(let i=0;i<this.prizeList.length;i++){
+                                                this.allProbably += this.prizeList[i].probably
+                                            }
+                                            this.allProbably -= params.row.probably
+                                            //
                                             this.couponsData = {
                                                 coupon_id: params.row.coupon_id,
                                                 orderby_lev: params.row.orderby_lev,
@@ -269,11 +283,12 @@ export default {
                                         size: "small"
                                     },
                                     attrs: {
-                                        style: "font-size:12px"
+                                        style: "font-size:12px;margin-left:10px;"
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.cancelEdit(true);
+                                            this.currentCouponId = params.row.id
+                                            this.cancelDelete(true);
                                         }
                                     }
                                 },
@@ -296,6 +311,23 @@ export default {
             if(!i){
                 this.cancelPeople(true)
             }
+        },
+        cancelDelete(i){
+            this.deleteModal = i
+            if(!i){
+                this.cancelPeople(true)
+            }else{
+                this.cancelPeople(false)
+            }
+        },
+        deleteInput(){
+            axios.request({
+                url:'lottery/prizes/'+this.currentCouponId,
+                method:'delete'
+            }).then(res=>{
+                this.$Message.success('删除成功')
+                this.getActivePrize()
+            })
         },
         newEdit(){
             this.cancelEdit(true)
