@@ -25,7 +25,7 @@ export default [{
     path: '/',
     name: 'power',
     component: Main,
-    redirect: '/active',
+    redirect: '/activeManage/active',
     meta: {
       icon: 'ios-apps'
     },

@@ -18,13 +18,41 @@
                     活动封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/lvshui/public/qiniu/upload"
-                        :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload"
+                        :on-success='successUpload1' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
-                <i-col span='24' style="display:block;margin:0 auto;">
-                    <img :src="activeData.img" width="100%">
+                <i-col span='24' style="display:block;margin:0 auto 10px;">
+                    <img :src="activeData.img" width="30%" style="display:block;margin:0 auto;">
+                </i-col>
+            </row>
+            <row>
+                <i-col span='4' style="line-height:30px;">
+                    转盘图片
+                </i-col>
+                <i-col span='4'>
+                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload"
+                        :on-success='successUpload2' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                </i-col>
+                <i-col span='24' style="display:block;margin:0 auto 10px;">
+                    <img :src="activeData.turn_img" width="30%" style="display:block;margin:0 auto;">
+                </i-col>
+            </row>
+            <row>
+                <i-col span='4' style="line-height:30px;">
+                    指针图片
+                </i-col>
+                <i-col span='4'>
+                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload"
+                        :on-success='successUpload3' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                </i-col>
+                <i-col span='24' style="display:block;margin:0 auto 10px;">
+                    <img :src="activeData.pointer_img" width="30%" style="display:block;margin:0 auto;">
                 </i-col>
             </row>
             <row style="margin-top:20px;">
@@ -65,7 +93,7 @@
             </row>
             <row style="margin-top:10px;">
                 <i-col span='4' style="line-height:30px;">
-                    排序等级
+                    奖品等级
                 </i-col>
                 <i-col span='20'>
                     <InputNumber :min="0" v-model="couponsData.orderby_lev"></InputNumber>
@@ -85,6 +113,14 @@
                 </i-col>
                 <i-col span='20'>
                     <InputNumber :min="1" v-model="couponsData.number"></InputNumber>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    角度
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber :min="0" v-model="couponsData.result_angle"></InputNumber>
                 </i-col>
             </row>
         </Modal>
@@ -119,16 +155,20 @@ export default {
             activeType: "免费",
             activeData: {
                 img: "",
+                turn_img:'',
+                pointer_img:'',
                 name: "",
                 introduce: "",
                 status: 0
             },
+            isNumPic:1,//1 img 2 turn_img 3 pointer_img
             couponsList:[],
             couponsData:{
                     coupon_id:'',//奖品卡券id
                     orderby_lev:0,//排序等级
                     probably:0,//概率%
-                    number:1//奖品数量 0位无限
+                    number:1,//奖品数量 0位无限
+                    result_angle:0,//角度
                 },
             currentCouponId:'',
             activeColunm: [
@@ -180,10 +220,10 @@ export default {
                                             this.cancelInput(true);
                                             this.isNew = false;
                                             this.currentId = params.row.id;
-                                            console.log(this.currentId);
-                                            
                                             this.activeData = {
                                                 img: params.row.img,
+                                                turn_img: params.row.turn_img,
+                                                pointer_img: params.row.pointer_img,
                                                 name: params.row.name,
                                                 introduce: params.row.introduce,
                                                 status: params.row.status
@@ -221,13 +261,12 @@ export default {
             peopleColunm: [
                 {
                     title: "奖品",
-                    key: "coupon_id",
                     render: (h,params)=>{
-                        return h('p',params.row.coupon.desc)
+                        return h('p',params.row.coupon_id===0?'感谢参与':params.row.coupon.name)
                     }
                 },
                 {
-                    title: "排序等级",
+                    title: "奖品等级",
                     key:'orderby_lev'
                 },
                 {
@@ -236,6 +275,9 @@ export default {
                 },{
                     title: "奖品数量(0 为无限制)",
                     key:'number'
+                },{
+                    title:'角度',
+                    key:'result_angle'
                 },{
                     title: "操作",
                     width: 200,
@@ -336,7 +378,8 @@ export default {
                 coupon_id:'',//奖品卡券id
                 orderby_lev:0,//排序等级
                 probably:0,//概率%
-                number:1//奖品数量 0位无限
+                number:1,//奖品数量 0位无限
+                result_angle:0
             }
             this.isNew = true
         },
@@ -350,7 +393,8 @@ export default {
                         coupon_id:this.couponsData.coupon_id,
                         orderby_lev:this.couponsData.orderby_lev,
                         probably:this.couponsData.probably,
-                        number:this.couponsData.number
+                        number:this.couponsData.number,
+                        result_angle:this.couponsData.result_angle
                     }
                 }).then(res=>{
                     this.getActivePrize()
@@ -365,7 +409,8 @@ export default {
                         coupon_id:this.couponsData.coupon_id,
                         orderby_lev:this.couponsData.orderby_lev,
                         probably:this.couponsData.probably,
-                        number:this.couponsData.number
+                        number:this.couponsData.number,
+                        result_angle:this.couponsData.result_angle
                     }
                 }).then(res=>{
                     this.getActivePrize()
@@ -379,7 +424,9 @@ export default {
                 status: 0,
                 name: "",
                 introduce: "",
-                img:''
+                img: "",
+                turn_img:'',
+                pointer_img:''
             };
             this.cancelInput(true);
         },
@@ -404,6 +451,8 @@ export default {
                         method: "post",
                         data: {
                             img: this.activeData.img,
+                            turn_img: this.activeData.turn_img,
+                            pointer_img: this.activeData.pointer_img,
                             name: this.activeData.name,
                             introduce: this.activeData.introduce,
                             status:this.activeData.status
@@ -422,6 +471,8 @@ export default {
                         method: "put",
                         data: {
                             img: this.activeData.img,
+                            turn_img: this.activeData.turn_img,
+                            pointer_img: this.activeData.pointer_img,
                             name: this.activeData.name,
                             introduce: this.activeData.introduce,
                             status:this.activeData.status
@@ -488,11 +539,26 @@ export default {
                 url:'coupon/coupons',
                 method:'get'
             }).then(res=>{
-                this.couponsList = res.data.data
+                this.couponsList = []
+                this.couponsList.push({
+                    id: 0,
+                    name:'没中奖'
+                })
+                for(let i=0;i<res.data.data.length;i++){
+                    this.couponsList.push(res.data.data[i])
+                }
             })
         },
         //上传事件
-        successUpload(file) {},
+        successUpload1(file) {
+            this.activeData.img = file.url
+        },
+        successUpload2(file) {
+            this.activeData.turn_img = file.url
+        },
+        successUpload3(file) {
+            this.activeData.pointer_img = file.url
+        },
         beforeUpload(file) {}
     },
     mounted() {
