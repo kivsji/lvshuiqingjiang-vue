@@ -30,6 +30,16 @@
                 </row>
                 <row style="margin-top:20px;">
                     <i-col span='4' style="line-height:30px;">
+                        等级
+                    </i-col>
+                    <i-col span='20'>
+                        <Select v-model="vipData.group_id" style="width:200px">
+                            <Option v-for="item in groupList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                        </Select>
+                    </i-col>
+                </row>
+                <row style="margin-top:20px;">
+                    <i-col span='4' style="line-height:30px;">
                         标签
                     </i-col>
                     <i-col span='20'>
@@ -94,6 +104,7 @@ export default {
                 fan_id: "",
                 card_id: "",
                 mobile: "",
+                group_id:'',
                 tags:[],
                 integral: 0,
                 money: 0,
@@ -103,6 +114,15 @@ export default {
                 {
                     title: "会员名",
                     key: "name"
+                },{
+                    title: "会员等级",
+                    render: (h,params)=>{
+                        return h('p',
+                        (this.groupList.find((x)=>{
+                            return x.id == params.row.group_id
+                        }).name)
+                        )
+                    }
                 },
                 {
                     title: "手机号",
@@ -181,10 +201,21 @@ export default {
                     }
                 }
             ],
-            vipList: []
+            vipList: [],
+            groupList:[]
         };
     },
     methods: {
+        getGroupList() {
+            axios
+                .request({
+                    url: "member/groups",
+                    method: "get"
+                })
+                .then(res => {
+                    this.groupList = res.data;
+                });
+        },
         getTag() {
             axios
                 .request({
@@ -203,6 +234,7 @@ export default {
                 fan_id: "",
                 card_id: "",
                 mobile: "",
+                group_id:'',
                 tags:[],
                 integral: 0,
                 money: 0,
@@ -234,10 +266,13 @@ export default {
                 });
         },
         inputVipData() {
+            console.log(this.vipData.group_id);
+            
             if(
                 this.vipData.name === ''||
                 this.vipData.mobile === ''||
                 this.vipData.integral === ''||
+                this.vipData.group_id === ''||
                 this.vipData.money === ''||
                 this.vipData.deadline === ''
             ){
@@ -257,6 +292,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
+                            group_id:this.vipData.group_id,
                             // tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
@@ -297,6 +333,7 @@ export default {
                             name: this.vipData.name,
                             mobile: this.vipData.mobile,
                             integral: this.vipData.integral,
+                            group_id:this.vipData.group_id,
                             // tags:this.vipData.tags,
                             money: this.vipData.money,
                             deadline: this.vipData.deadline //结束日期
@@ -352,6 +389,7 @@ export default {
     mounted() {
         this.getVipList();
         this.getTag()
+        this.getGroupList()
     }
 };
 </script>

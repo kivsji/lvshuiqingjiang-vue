@@ -23,7 +23,7 @@
                     优惠类型
                 </i-col>
                 <i-col span='20'>
-                    <RadioGroup v-model="vipSetData.offer_status" type="button">
+                    <RadioGroup v-model="vipSetData.offer_status" type="button" @on-change='resetOffer'>
                         <Radio :label="0">关闭</Radio>
                         <Radio :label="1">满减</Radio>
                         <Radio :label="2">折扣</Radio>
@@ -38,7 +38,7 @@
                     <i-switch v-model="vipSetData.auto_status" :true-value='1' :false-value='0' />
                 </i-col>
             </row>
-            <row style="margin-top:30px;border-top:1px solid #eee;padding-top:30px;" v-show='vipSetData.offer_status===1'>
+            <row style="margin-top:30px;border-top:1px solid #eee;padding-top:30px;" v-if='vipSetData.offer_status===1'>
                 <!-- <i-col span='2' style="line-height:30px;text-align:center;">
                 等级对应折扣
             </i-col> -->
@@ -46,38 +46,47 @@
                     <row>
 
                         <i-col span='2' style="line-height:30px;text-align:center;">会员折扣:</i-col>
-                        <i-col span='1'>
+                        <!-- <i-col span='1'>
                             <Button icon="md-add" type="primary" shape="circle" @click="addOffer()"></Button>
-                        </i-col>
+                        </i-col> -->
                         <i-col span='10'>
-                            <row v-for='(item,index) in vipSetData.offer' :key='index' style="margin-bottom:10px;">
-                                <i-col span='11'>
-                                    <Input v-model="item.full">
+                            <row v-for='(item,index) in groupList' :key='index' style="margin-bottom:10px;">
+                                <i-col span='4'>
+                                    <p style="line-height:32px;font-size:16px;">{{item.name}}:</p>
+                                </i-col>
+                                <i-col span='9'>
+                                    <Input v-model="offerData1[index].condition">
                                     <span slot="prepend">满</span>
                                     </Input>
                                 </i-col>
-                                <i-col span='11' offset='2'>
-                                    <Input v-model="item.reduction">
+                                <i-col span='9' offset='2'>
+                                    <Input v-model="offerData1[index].discount">
                                     <span slot="prepend">减</span>
                                     </Input>
-                                </i-col>
+                                </i-col> 
                             </row>
                         </i-col>
-
                     </row>
                 </i-col>
             </row>
-            <row style="margin-top:30px;border-top:1px solid #eee;padding-top:30px;" v-show='vipSetData.offer_status===2'>
+            <row style="margin-top:30px;border-top:1px solid #eee;padding-top:30px;" v-if='vipSetData.offer_status===2'>
                 <!-- <i-col span='2' style="line-height:30px;text-align:center;">
                 会员折扣
             </i-col> -->
                 <i-col span='24'>
                     <row>
                         <i-col span='2' style="line-height:30px;text-align:center;">会员折扣:</i-col>
-                        <i-col span='5'>
-                            <Input v-model="vipSetData.offer[0].discount">
-                            <span slot="append">折</span>
-                            </Input>
+                        <i-col span='10'>
+                            <row v-for='(item,index) in groupList' :key='index' style="margin-bottom:10px;">
+                                <i-col span='4'>
+                                    <p style="line-height:32px;font-size:16px;">{{item.name}}:</p>
+                                </i-col>
+                                <i-col span='9'>
+                                    <Input v-model="offerData2[index].discount">
+                                        <span slot="prepend">折</span>
+                                    </Input>
+                                </i-col>
+                            </row>
                         </i-col>
                     </row>
                 </i-col>
@@ -112,11 +121,51 @@ export default {
                         discount: "" //折
                     }
                 ] //等级对应折扣
+
             },
-            groups: ["普通会员", "高级会员"]
+            offerData1:[{
+                        condition:'',
+                        discount:''
+                    }],
+            offerData2:[{
+                        discount:''
+                    }],
+            groups: ["普通会员", "高级会员"],
+            groupList:[],
         };
     },
     methods: {
+        resetOffer(i){
+            if(i === 1){
+                this.offerData1 = []
+                for(let i=0;i<this.groupList.length;i++){
+                    this.offerData1.push({
+                        condition:'',
+                        discount:''
+                    })
+                }
+            }else if(i === 2){
+                this.offerData2 = []
+                for(let i=0;i<this.groupList.length;i++){
+                    this.offerData2.push({
+                        discount:''
+                    })
+                }
+            }
+            console.log(this.offerData2);
+            
+        },
+        getGroupList() {
+            axios
+                .request({
+                    url: "member/groups",
+                    method: "get"
+                })
+                .then(res => {
+                    this.groupList = res.data;
+                    this.getVipSet();
+                });
+        },
         addOffer() {
             this.vipSetData.offer.push({
                 full: "",
@@ -124,12 +173,12 @@ export default {
             });
             this.vipSetData.offer_status = 0;
             this.vipSetData.offer_status = 1;
-            // this.$set(this.vipSetData.offer[this.vipSetData.offer.length-1],'full', '0')
-            // this.$set(this.vipSetData.offer[this.vipSetData.offer.length-1],'reduction', '0')
         },
         getVipSet() {
             this.spinShow = true;
             //获取会员设置
+            console.log(1);
+            
             axios
                 .request({
                     url: "/member/settings",
@@ -146,72 +195,54 @@ export default {
                     this.vipSetData.offer = [];
 
                     if (this.vipSetData.offer_status === 1) {
-                        for (let i = 0; i < res.setting.offer.length; i++) {
-                            this.vipSetData.offer.push({
-                                full: "",
-                                reduction: ""
-                            });
-                            this.vipSetData.offer[i].full =
-                                res.setting.offer[i].condition;
-                            this.vipSetData.offer[i].reduction =
-                                res.setting.offer[i].discount;
-                        }
+                        // for (let i = 0; i < res.setting.offer.length; i++) {
+                        //     this.vipSetData.offer.push({
+                        //         full: "",
+                        //         reduction: ""
+                        //     });
+                        //     this.vipSetData.offer[i].full =
+                        //         res.setting.offer[i].condition;
+                        //     this.vipSetData.offer[i].reduction =
+                        //         res.setting.offer[i].discount;
+                        // }
+                        this.offerData1 = res.setting.offer
                     } else if (this.vipSetData.offer_status === 2) {
-                        this.vipSetData.offer = [
-                            {
-                                discount: ""
-                            }
-                        ];
-                        this.vipSetData.offer[0].discount =
-                            res.setting.offer[0].discount;
+                        // this.vipSetData.offer = [
+                        //     {
+                        //         discount: ""
+                        //     }
+                        // ];
+                        // this.vipSetData.offer[0].discount =
+                        //     res.setting.offer[0].discount;
+                        this.offerData2 = res.setting.offer
                     } else {
-                        this.vipSetData.offer = [
-                            {
-                                full: "", //满
-                                reduction: "", //减
-                                discount: "" //折
-                            }
-                        ];
+                        this.vipSetData.offer = [];
                     }
-
+                    
+                    
                     this.spinShow = false;
                 });
         },
         inputVipSet() {
             let offerr = [];
-            for (let i = 0; i < this.vipSetData.offer.length; i++) {
-                if (this.vipSetData.offer_status === 1) {
-                    if (
-                        this.vipSetData.offer[i].full === "" ||
-                        this.vipSetData.offer[i].reduction === "" ||
-                        this.vipSetData.offer[i].full === undefined ||
-                        this.vipSetData.offer[i].reduction === undefined
-                    ) {
-                        this.$Message.error("满减规则不完整");
-                        return;
+            if(this.vipSetData.offer_status === 1){
+                for(let i=0;i<this.offerData1.length;i++){
+                    if(this.offerData1[i].condition === '' || this.offerData1[i].discount === ''){
+                        this.$Message.error('满级资料不完整')
+                        return false
                     }
-                    offerr.push({
-                        condition: this.vipSetData.offer[i].full,
-                        discount: this.vipSetData.offer[i].reduction
-                    });
-                } else if (this.vipSetData.offer_status === 2) {
-                    if (
-                        this.vipSetData.offer[0].discount === "" ||
-                        this.vipSetData.offer[0].discount === undefined
-                    ) {
-                        this.$Message.error("折扣规则不完整");
-                        return;
-                    }
-                    offerr = [
-                        {
-                            discount: this.vipSetData.offer[0].discount
-                        }
-                    ];
-                } else {
-                    offerr = [];
                 }
+                offerr = this.offerData1
+            }else if(this.vipSetData.offer_status === 2){
+                for(let i=0;i<this.offerData2.length;i++){
+                    if(this.offerData2[i].discount === ''){
+                        this.$Message.error('满级资料不完整')
+                        return false
+                    }
+                }
+                offerr = this.offerData2
             }
-
+            
             this.spinShow = true;
             axios
                 .request({
@@ -232,7 +263,8 @@ export default {
         }
     },
     mounted() {
-        this.getVipSet();
+        
+        this.getGroupList()
     }
 };
 </script>

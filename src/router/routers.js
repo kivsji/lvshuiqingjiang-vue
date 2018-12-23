@@ -103,6 +103,14 @@ export default [{
           },
           component: () => import('@/view/lvshuiqingjiang/vip/vipSet.vue')
         }, {
+            path: '/vipGroup',
+            name: 'vipGroup',
+            meta: {
+              title: 'VIP等级',
+              icon: 'ios-star-outline'
+            },
+            component: () => import('@/view/lvshuiqingjiang/vip/vipGroup.vue')
+          }, {
           path: '/vipMoney',
           name: 'vipMoney',
           meta: {
