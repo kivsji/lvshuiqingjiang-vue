@@ -37,6 +37,14 @@ export default [{
           icon: 'ios-construct-outline'
         },
         component: () => import('@/view/lvshuiqingjiang/menu/menu.vue')
+      },{
+        path: 'coupons',
+        name: 'coupons',
+        meta: {
+          title: '奖券管理',
+          icon: 'ios-card'
+        },
+        component: () => import('@/view/lvshuiqingjiang/coupons/coupons.vue')
       }, {
         path: 'activeManage',
         name: 'activeManage',

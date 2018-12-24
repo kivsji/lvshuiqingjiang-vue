@@ -1,71 +1,36 @@
 <template>
     <div>
-        <Spin
-            size="large"
-            fix
-            v-if="spinShow"
-        ></Spin>
+        <Spin size="large" fix v-if="spinShow"></Spin>
         <row>
             <i-col style="margin-bottom:10px;">
-                <Button
-                    type='success'
-                    @click='openSet()'
-                >分享设置</Button>
+                <Button type='success' @click='openSet()'>分享设置</Button>
             </i-col>
             <i-col style="margin-bottom:20px;">
                 <!-- <Page :total="total" :page-size="pre_page" :on-change='changePage' /> -->
             </i-col>
             <i-col>
-                <i-table
-                    size="large"
-                    style="min-width:800px;"
-                    :columns="memberColunm"
-                    :data="memberList"
-                ></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="memberColunm" :data="memberList"></i-table>
             </i-col>
         </row>
-        <Modal
-            v-model="activeModal"
-            title='活动分享设置'
-            @on-ok="inputSet()"
-            @on-cancel="cancelActive(false)"
-            :mask-closable="false"
-        >
+        <Modal v-model="activeModal" title='活动分享设置' @on-ok="inputSet()" @on-cancel="cancelActive(false)" :mask-closable="false">
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     分享活动开关
                 </i-col>
                 <i-col span='20'>
-                    <i-switch
-                        v-model="task.status"
-                        :true-value='1'
-                        :false-value='0'
-                    />
+                    <i-switch v-model="task.status" :true-value='1' :false-value='0' />
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     分享任务数
                 </i-col>
                 <i-col span='20'>
-                    <Input
-                        min-
-                        v-model="task.task"
-                        :min="0"
-                    />
+                    <Input min- v-model="task.task" :min="0" />
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     分享名称
                 </i-col>
                 <i-col span='20'>
@@ -73,10 +38,7 @@
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     分享描述
                 </i-col>
                 <i-col span='20'>
@@ -84,36 +46,19 @@
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     分享封面
                 </i-col>
                 <i-col span='20'>
-                    <Upload
-                        action="https://zhlsqj.com/qiniu/upload"
-                        :on-success='successUpload'
-                        :show-upload-list='false'
-                        :headers="headers"
-                    >
+                    <Upload action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload' :show-upload-list='false'
+                        :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
-                    <img
-                        :src="task.img"
-                        width="300px"
-                        height="300px"
-                        style="margin-top:10px;"
-                    >
+                    <img :src="task.img" width="300px" height="300px" style="margin-top:10px;">
                 </i-col>
             </row>
         </Modal>
-        <Modal
-            v-model="checkModal"
-            title='确认核销'
-            @on-ok="inputCheck()"
-            @on-cancel="cancelCheck(false)"
-        >
+        <Modal v-model="checkModal" title='确认核销' @on-ok="inputCheck()" @on-cancel="cancelCheck(false)">
             <p style="text-align:center;">确认<span style="color:red;">{{currentName}}</span>完成了任务？</p>
         </Modal>
     </div>
@@ -190,15 +135,17 @@ export default {
     },
     methods: {
         successUpload(file) {
-            axios.request({
+            axios
+                .request({
                     url: "qiniu/delete",
                     method: "post",
                     data: {
                         url: this.task.img
                     }
-                }).then(res=>{
-                    this.task.img = file.url
                 })
+                .then(res => {
+                    this.task.img = file.url;
+                });
         },
         cancelCheck(i) {
             this.checkModal = i;
