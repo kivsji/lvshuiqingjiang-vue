@@ -112,7 +112,7 @@
                     奖品数量
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber :min="1" v-model="couponsData.number"></InputNumber>
+                    <InputNumber :min="0" v-model="couponsData.number"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
@@ -121,6 +121,14 @@
                 </i-col>
                 <i-col span='20'>
                     <InputNumber :min="0" v-model="couponsData.result_angle"></InputNumber>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col span='4' style="line-height:30px;">
+                    等级名称
+                </i-col>
+                <i-col span='20'>
+                    <Input v-model="couponsData.orderby_name"/>
                 </i-col>
             </row>
         </Modal>
@@ -169,6 +177,7 @@ export default {
                     probably:0,//概率%
                     number:1,//奖品数量 0位无限
                     result_angle:0,//角度
+                    orderby_name:''
                 },
             currentCouponId:'',
             activeColunm: [
@@ -268,6 +277,9 @@ export default {
                 {
                     title: "奖品等级",
                     key:'orderby_lev'
+                },{
+                    title: "等级名称",
+                    key:'orderby_name'
                 },
                 {
                     title: "概率(%)",
@@ -310,7 +322,8 @@ export default {
                                                 coupon_id: params.row.coupon_id,
                                                 orderby_lev: params.row.orderby_lev,
                                                 probably: params.row.probably,
-                                                number: params.row.number
+                                                number: params.row.number,
+                                                orderby_name: params.row.orderby_name
                                             };
                                         }
                                     }
@@ -379,7 +392,8 @@ export default {
                 orderby_lev:0,//排序等级
                 probably:0,//概率%
                 number:1,//奖品数量 0位无限
-                result_angle:0
+                result_angle:0,
+                orderby_name:''
             }
             this.isNew = true
         },
@@ -394,7 +408,8 @@ export default {
                         orderby_lev:this.couponsData.orderby_lev,
                         probably:this.couponsData.probably,
                         number:this.couponsData.number,
-                        result_angle:this.couponsData.result_angle
+                        result_angle:this.couponsData.result_angle,
+                        orderby_name:this.couponsData.orderby_name
                     }
                 }).then(res=>{
                     this.getActivePrize()
@@ -410,7 +425,8 @@ export default {
                         orderby_lev:this.couponsData.orderby_lev,
                         probably:this.couponsData.probably,
                         number:this.couponsData.number,
-                        result_angle:this.couponsData.result_angle
+                        result_angle:this.couponsData.result_angle,
+                        orderby_name:this.couponsData.orderby_name
                     }
                 }).then(res=>{
                     this.getActivePrize()
