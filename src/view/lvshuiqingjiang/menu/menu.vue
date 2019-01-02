@@ -170,6 +170,8 @@ export default {
                 .then(res => {
                     this.selectIndex = 0;
                     this.currentTwoIndex = 6;
+                    this.selectOneIndex = 0;
+                    this.currentIndex = '';
                     this.menuList = res.data.menu.button;
                     this.spinShow = false;
                     this.getMaterialList();
@@ -299,8 +301,8 @@ export default {
                 }
             }
             //保存二级
-            console.log(this.currentTwoIndex);
-            console.log(this.currentTwo.length);
+            // console.log(this.currentTwoIndex);
+            // console.log(this.currentTwo.length);
             // this.spinShow = false
             // return
             if (this.selectIndex === 0 && this.currentTwoIndex < 6) {
@@ -308,19 +310,20 @@ export default {
                     this.currentTwo.length < 5 &&
                     this.currentTwoIndex > this.currentTwo.length
                 ) {
-                    this.menuList[this.selectOneIndex] = {
-                        name: this.menuList[this.selectOneIndex].name,
-                        sub_button: this.menuList[this.selectOneIndex]
+                    
+                    this.menuList[this.currentIndex-1] = {
+                        name: this.menuList[this.currentIndex-1].name,
+                        sub_button: this.menuList[this.currentIndex-1]
                             .sub_button
                     };
                     if (this.menuData.type === "view") {
-                        this.menuList[this.selectOneIndex].sub_button.push({
+                        this.menuList[this.currentIndex-1].sub_button.push({
                             name: this.menuData.name,
                             type: this.menuData.type,
                             url: this.menuData.url
                         });
                     } else {
-                        this.menuList[this.selectOneIndex].sub_button.push({
+                        this.menuList[this.currentIndex-1].sub_button.push({
                             name: this.menuData.name,
                             type: this.menuData.type,
                             media_id: this.menuData.media_id
@@ -328,30 +331,28 @@ export default {
                     }
                 } else {
                     if (this.menuData.type === "view") {
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].name = this.menuData.name;
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].type = this.menuData.type;
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].url = this.menuData.url;
                     } else {
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].name = this.menuData.name;
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].type = this.menuData.type;
-                        this.menuList[this.selectOneIndex].sub_button[
+                        this.menuList[this.currentIndex-1].sub_button[
                             this.currentTwoIndex
                         ].media_id = this.menuData.media_id;
                     }
                 }
             }
-
-            console.log(this.menuList);
             this.selectIndex = 0;
             this.currentIndex = "";
             this.currentTwoIndex = 6;

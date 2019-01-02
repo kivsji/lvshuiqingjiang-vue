@@ -69,7 +69,7 @@ class httpRequest {
         // window.location.href = '/login'
         if(error['request'].status === 401){
           Cookies.remove(TOKEN_KEY)
-          window.location.href = '/login'
+          window.location.href = '/backend/#/login'
           Message.error('登录过期，请重新登录')
         }else{
           Message.error('发生未知错误,请按f12查看network')
