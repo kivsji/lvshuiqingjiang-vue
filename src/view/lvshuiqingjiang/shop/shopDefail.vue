@@ -50,7 +50,8 @@
                     >
                         <Radio
                             :label="item.value"
-                            v-for="item in goodsType"
+                            v-for="(item,index) in goodsType"
+                            :key='index'
                         >{{item.ch}}</Radio>
                     </RadioGroup>
                 </i-col>
@@ -187,15 +188,29 @@
                     ></InputNumber>
                 </i-col>
             </row>
+            <row style="margin-top:10px;" v-if='goodData.type === "group"'>
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
+                    团购人数
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber
+                        v-model="goodData.peoNum"
+                        :min="0"
+                    ></InputNumber>
+                </i-col>
+            </row>
             <row
                 style="margin-top:10px;"
-                v-if='goodData.type === "discount"'
+                v-if='goodData.type === "discount" || goodData.type === "group" || goodData.type === "member"'
             >
                 <i-col
                     span='4'
                     style="line-height:30px;"
                 >
-                    优惠上架日期
+                    优惠日期
                 </i-col>
                 <i-col span='20'>
                     <DatePicker
@@ -263,7 +278,6 @@
                         <div
                             v-for='(item,index) in currentPicList'
                             :key="index"
-                            @click=""
                             style="border:1px solid #eee;width:224px;height:224px;float:left;margin:10px 5px 0;overflow:hidden;position:relative;"
                         >
                             <span
@@ -344,6 +358,7 @@ export default {
                 price: 0,
                 discount: 0,
                 monthly_sales: 0,
+                peoNum:0,
                 is_up: 0,
                 stock:0,
                 sratr_date: "",
