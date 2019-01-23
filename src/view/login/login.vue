@@ -38,15 +38,14 @@ export default {
         handleSubmit({ username, password }) {
             this.handleLogin({ username, password })
                 .then(res => {
+                    if(res.status === 'error'){
+                        this.$Message.error("账号或密码错误，请重新登录");
+                        return
+                    }
                     this.$router.push({
                         path: "/activeManage/active"
                     });
-                    console.log(1);
                 })
-                .catch(res => {
-                    console.log(2);
-                    this.$Message.error("账号或密码错误，请重新登录");
-                });
         }
     }
 };

@@ -43,7 +43,7 @@ export default {
           commit('setToken', res.token)
           Cookies.set('token', res.token)
           localStorage.setItem('token',res.token)
-          resolve()
+          resolve(res)
         }).catch(err => {
           reject(err)
         })
