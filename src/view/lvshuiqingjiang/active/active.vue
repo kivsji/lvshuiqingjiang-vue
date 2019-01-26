@@ -18,7 +18,7 @@
                     活动封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/lvshui/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>

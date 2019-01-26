@@ -1,118 +1,52 @@
 <template>
     <div>
-        <Spin
-            size="large"
-            fix
-            v-if="spinShow"
-        ></Spin>
+        <Spin size="large" fix v-if="spinShow"></Spin>
         <row>
             <i-col style="margin-bottom:10px;">
-                <Button
-                    type='primary'
-                    @click='newData()'
-                >新建商品</Button>
+                <Button type='primary' @click='newData()'>新建商品</Button>
             </i-col>
             <i-col style="margin-bottom:20px;">
-                <Page
-                    :total="total"
-                    :page-size="pre_page"
-                    :on-change='changePage'
-                />
+                <Page :total="total" :page-size="pre_page" :on-change='changePage' />
             </i-col>
             <i-col>
-                <i-table
-                    size="large"
-                    style="min-width:800px;"
-                    :columns="goodsColunm"
-                    :data="goodsList"
-                ></i-table>
+                <i-table size="large" style="min-width:800px;" :columns="goodsColunm" :data="goodsList"></i-table>
             </i-col>
         </row>
-        <Modal
-            v-model="dataModal"
-            :title='dataTitle'
-            @on-ok="inputData()"
-            @on-cancel="openGoodModal(false)"
-            :mask-closable="false"
-            width='600px'
-        >
+        <Modal v-model="dataModal" :title='dataTitle' @on-ok="inputData()" @on-cancel="openGoodModal(false)"
+            :mask-closable="false" width='600px'>
             <row>
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品类型
                 </i-col>
                 <i-col>
-                    <RadioGroup
-                        v-model="goodData.type"
-                        type="button"
-                    >
-                        <Radio
-                            :label="item.value"
-                            v-for="(item,index) in goodsType"
-                            :key='index'
-                        >{{item.ch}}</Radio>
+                    <RadioGroup v-model="goodData.type" type="button">
+                        <Radio :label="item.value" v-for="(item,index) in goodsType" :key='index'>{{item.ch}}</Radio>
                     </RadioGroup>
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品分类
                 </i-col>
                 <i-col>
-                    <Select
-                        v-model="goodData.nav_id"
-                        style="width:200px"
-                    >
-                        <Option
-                            v-for="(item,index) in typeList"
-                            :value="item.id"
-                            :key="index"
-                        >{{ item.name }}</Option>
+                    <Select v-model="goodData.nav_id" style="width:200px">
+                        <Option v-for="(item,index) in typeList" :value="item.id" :key="index">{{ item.name }}</Option>
                     </Select>
                 </i-col>
             </row>
-            <!-- <row style="margin-top:20px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
-                    上架
-                </i-col>
-                <i-col>
-                    <i-switch
-                        v-model="goodData.is_up"
-                        :true-value='1'
-                        :false-value='0'
-                    />
-                </i-col>
-            </row> -->
             <row style="margin-top:20px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品图片列表
                 </i-col>
                 <i-col span='7'>
-                    <Button
-                        icon="ios-cloud-upload-outline"
-                        @click="openGroundPic(true)"
-                    >编辑图片列表</Button>
+                    <Button icon="ios-cloud-upload-outline" @click="openGroundPic(true)">编辑图片列表</Button>
                 </i-col>
                 <i-col span='4'>
                     <p style="line-height:30px;">共 {{goodData.imgs.length}} 张</p>
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品名称
                 </i-col>
                 <i-col span='20'>
@@ -120,130 +54,69 @@
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品库存
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.stock"
-                        :min="0"
-                        :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
-                        :parser="value => value.replace(/$s?|(,*)/g, '')"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.stock" :min="0" :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     每人限购
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.limit"
-                        :min="0"
-                        :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
-                        :parser="value => value.replace(/$s?|(,*)/g, '')"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.limit" :min="0" :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     价格
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.price"
-                        :min="0.00"
-                        :precision='2'
-                        :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')"
-                        :parser="value => value.replace(/$s?|(,*)/g, '')"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.price" :min="0.00" :precision='2' :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
-            <row
-                style="margin-top:10px;"
-                v-if='goodData.type !== "general"'
-            >
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+            <row style="margin-top:10px;" v-if='goodData.type !== "general"'>
+                <i-col span='4' style="line-height:30px;">
                     优惠价
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.discount"
-                        :min="0.00"
-                        :precision='2'
-                        :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')"
-                        :parser="value => value.replace(/$s?|(,*)/g, '')"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.discount" :min="0.00" :precision='2' :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;" v-if='goodData.type === "group"'>
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     团购人数
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.peoNum"
-                        :min="0"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.peoNum" :min="0"></InputNumber>
                 </i-col>
             </row>
-            <row
-                style="margin-top:10px;"
-                v-if='goodData.type === "discount" || goodData.type === "group" || goodData.type === "member"'
-            >
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+            <row style="margin-top:10px;" v-if='goodData.type === "discount" || goodData.type === "group" || goodData.type === "member"'>
+                <i-col span='4' style="line-height:30px;">
                     优惠日期
                 </i-col>
                 <i-col span='20'>
-                    <DatePicker
-                        @on-change='changeGoodDate'
-                        :value='goodDiscountDate'
-                        type="daterange"
-                        placement="bottom-end"
-                        placeholder="选择日期"
-                        style="width: 200px"
-                    ></DatePicker>
+                    <DatePicker @on-change='changeGoodDate' :value='goodDiscountDate' type="daterange" placement="bottom-end"
+                        placeholder="选择日期" style="width: 200px"></DatePicker>
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     已售
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber
-                        v-model="goodData.monthly_sales"
-                        :min="0"
-                        :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
-                        :parser="value => value.replace(/$s?|(,*)/g, '')"
-                    ></InputNumber>
+                    <InputNumber v-model="goodData.monthly_sales" :min="0" :formatter="value => `${value} 件`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col
-                    span='4'
-                    style="line-height:30px;"
-                >
+                <i-col span='4' style="line-height:30px;">
                     商品内容
                 </i-col>
                 <i-col span='20'>
@@ -251,46 +124,22 @@
                 </i-col>
             </row>
         </Modal>
-        <Modal
-            v-model="groundPic"
-            title="编辑图片列表"
-            @on-ok="openGroundPic(false)"
-            @on-cancel="openGroundPic(false)"
-        >
-            <Spin
-                size="large"
-                fix
-                v-if="spinShow"
-            ></Spin>
+        <Modal v-model="groundPic" title="编辑图片列表" @on-ok="openGroundPic(false)" @on-cancel="openGroundPic(false)">
+            <Spin size="large" fix v-if="spinShow"></Spin>
             <row>
                 <i-col>
-                    <Upload
-                        action="https://zhlsqj.com/qiniu/upload"
-                        :on-success='successUpload'
-                        :show-upload-list='false'
-                        :headers="headers"
-                    >
+                    <Upload action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload' :show-upload-list='false'
+                        :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
                 <i-col>
                     <div style="width:100%;height:600px;margin-top:10px;border:1px solid #ddd;overflow-y:scroll;overflow-x:hidden;">
-                        <div
-                            v-for='(item,index) in currentPicList'
-                            :key="index"
-                            style="border:1px solid #eee;width:224px;height:224px;float:left;margin:10px 5px 0;overflow:hidden;position:relative;"
-                        >
-                            <span
-                                @click.stop="openDeletePic(true,index)"
-                                style="position:absolute;margin-top:0;margin:left;background:#aaa;color:#fff;display:block;width:20px;height:20px;line-height:20px;text-align:center;cursor: pointer"
-                            >
+                        <div v-for='(item,index) in currentPicList' :key="index" style="border:1px solid #eee;width:224px;height:224px;float:left;margin:10px 5px 0;overflow:hidden;position:relative;">
+                            <span @click.stop="openDeletePic(true,index)" style="position:absolute;margin-top:0;margin:left;background:#aaa;color:#fff;display:block;width:20px;height:20px;line-height:20px;text-align:center;cursor: pointer">
                                 ╳
                             </span>
-                            <img
-                                :src="item"
-                                height="100%"
-                                style="display:block;margin:0 auto;"
-                            >
+                            <img :src="item" height="100%" style="display:block;margin:0 auto;">
                         </div>
                     </div>
                 </i-col>
@@ -298,12 +147,7 @@
             <div slot="footer">
             </div>
         </Modal>
-        <Modal
-            v-model="deletePicModal"
-            title="删除"
-            @on-ok="deletePic()"
-            @on-cancel="openDeletePic(false)"
-        >
+        <Modal v-model="deletePicModal" title="删除" @on-ok="deletePic()" @on-cancel="openDeletePic(false)">
             <row>
                 <i-col style="margin:0 auto;">
                     是否删除该图片
@@ -311,12 +155,7 @@
                 </i-col>
             </row>
         </Modal>
-        <Modal
-            v-model="deleteModal"
-            title='删除'
-            @on-ok="deleteGood()"
-            @on-cancel="deleteShow(false)"
-        >
+        <Modal v-model="deleteModal" title='删除' @on-ok="deleteGood()" @on-cancel="deleteShow(false)">
             是否删除商品 <span style='color:red'>{{deleteGoodName}}</span>
         </Modal>
     </div>
@@ -358,9 +197,9 @@ export default {
                 price: 0,
                 discount: 0,
                 monthly_sales: 0,
-                peoNum:0,
+                peoNum: 0,
                 is_up: 0,
-                stock:0,
+                stock: 0,
                 sratr_date: "",
                 end_date: ""
             },
@@ -378,7 +217,7 @@ export default {
             goodsList: [],
             goodsColunm: [
                 {
-                    title:'商品ID',
+                    title: "商品ID",
                     key: "id"
                 },
                 {
@@ -389,7 +228,8 @@ export default {
                             "p",
                             {
                                 attrs: {
-                                    style:'overflow: hidden;text-overflow:ellipsis;white-space: nowrap;'
+                                    style:
+                                        "overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
                                 }
                             },
                             params.row.name
