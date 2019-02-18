@@ -124,9 +124,9 @@ export default {
             },
             currentTwo: [],
             currentIndex: "",
-            currentTwoIndex: 6,
-            selectIndex: 0,
-            selectOneIndex: 0,
+            currentTwoIndex: 6,//当前二级菜单index
+            selectIndex: 0,//当前一级菜单index（只用于标识active）
+            selectOneIndex: 0,//当前一级菜单index
             keyList: []
         };
     },
@@ -142,8 +142,8 @@ export default {
                 this.menuList.splice(this.selectIndex - 1, 1);
             } else {
                 //删除2级菜单
-                console.log(this.selectOneIndex);
-                this.menuList[this.selectOneIndex].sub_button.splice(
+                console.log(this.menuList[this.selectOneIndex-1].sub_button);
+                this.menuList[this.selectOneIndex-1].sub_button.splice(
                     this.currentTwoIndex,
                     1
                 );
@@ -192,6 +192,7 @@ export default {
         },
         seletcOne(index) {
             this.selectIndex = index;
+            this.selectOneIndex = index;
             if (index <= this.menuList.length) {
                 this.menuData = this.menuList[index - 1];
                 this.menuData = {

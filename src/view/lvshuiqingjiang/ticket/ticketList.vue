@@ -20,6 +20,14 @@
             </row>
             <row style="margin-top:20px;">
                 <i-col span='4' style="line-height:30px;">
+                    上架
+                </i-col>
+                <i-col span='20'>
+                    <i-switch v-model="goodData.is_up" :true-value='1' :false-value='0'/>
+                </i-col>
+            </row>
+            <row style="margin-top:20px;">
+                <i-col span='4' style="line-height:30px;">
                     封面
                 </i-col>
                 <i-col span='4'>
@@ -29,7 +37,7 @@
                     </Upload>
                 </i-col>
                 <i-col span='24' style="display:block;margin:0 auto;">
-                    <img :src="goodData.cover" width="100px">
+                    <img :src="goodData.cover" width="100px" style="display:block;margin:0 auto;">
                 </i-col>
             </row>
             <row style="margin-top:20px;">
@@ -155,25 +163,33 @@ export default {
                     title: "每日每人限额",
                     key: "limit"
                 },
-                {
-                    title: "上架",
-                    render: (h, params) => {
-                        return h(
-                            "i-switch",
-                            {
-                                props: {
-                                    trueValue: 1,
-                                    falseValue: 0,
-                                    value: params.row.is_up
-                                },
-                                nativeOn: {
-                                    click: () => {}
-                                }
-                            },
-                            0
-                        );
-                    }
-                },
+                // {
+                //     title: "上架",
+                //     render: (h, params) => {
+                //         return h(
+                //             "i-switch",
+                //             {
+                //                 props: {
+                //                     trueValue: 1,
+                //                     falseValue: 0,
+                //                     value: params.row.is_up
+                //                 },
+                //                 nativeOn: {
+                //                     click: () => {
+                //                         axios.request({
+                //                             url:'ticket/is-up/'+params.row.id,
+                //                             method:'post',
+                //                             data:{
+                //                                 is_up:params.row.is_up
+                //                             }
+                //                         })
+                //                     }
+                //                 }
+                //             },
+                //             0
+                //         );
+                //     }
+                // },
                 {
                     title: "操作",
                     render: (h, params) => {
@@ -201,12 +217,15 @@ export default {
                                             this.goodData.limit =
                                                 params.row.limit;
                                             this.goodData.price =
-                                                params.row.price;
+                                                parseFloat(params.row.price);
+                                            this.goodData.is_up =
+                                                params.row.is_up;
                                             this.goodData.from_now =
                                                 params.row.from_now;
                                             this.goodData.content =
                                                 params.row.content;
-
+                                            this.goodData.cover =
+                                                params.row.cover;
                                             this.openGoodModal(true);
                                         }
                                     }
@@ -276,6 +295,7 @@ export default {
             this.goodData.total = 0;
             this.goodData.limit = 1;
             this.goodData.price = 0;
+            this.goodData.is_up = 0;
             this.goodData.from_now = 1;
             this.goodData.content = "";
             this.goodData.cover = "";
@@ -348,7 +368,7 @@ export default {
                             price: this.goodData.price,
                             content: this.goodData.content,
                             from_now: this.goodData.from_now,
-                            is_up: 0
+                            is_up: this.goodData.is_up
                         }
                     })
                     .then(res => {
