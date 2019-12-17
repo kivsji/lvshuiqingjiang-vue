@@ -222,7 +222,8 @@ export default [{
             name: 'ticketOrder',
             meta: {
                 title: '门票订单',
-                icon: 'ios-apps-outline'
+                icon: 'ios-apps-outline',
+                // hideInMenu:'true'
             },
             component: () => import('@/view/lvshuiqingjiang/ticket/ticketOrder.vue')
         }],
