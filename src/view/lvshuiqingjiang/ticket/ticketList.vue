@@ -1,17 +1,37 @@
 <template>
     <div>
         <i-col style="margin-bottom:10px;">
-            <Button type='primary' @click='newData()'>新建门票</Button>
+            <Button
+                type='primary'
+                @click='newData()'
+            >新建门票</Button>
         </i-col>
         <i-col style="margin-bottom:20px;">
-            <Page :total="total" :page-size="pre_page" @change="changePage()"/>
+            <Page
+                :total="total"
+                :page-size="pre_page"
+                @change="changePage()"
+            />
         </i-col>
         <i-col>
-            <i-table size="large" style="min-width:800px;" :columns="ticketColunm" :data="ticketList"></i-table>
+            <i-table
+                size="large"
+                style="min-width:800px;"
+                :columns="ticketColunm"
+                :data="ticketList"
+            ></i-table>
         </i-col>
-        <Modal v-model="dataModal" :title='dataTitle' :mask-closable="false" width='600px'>
+        <Modal
+            v-model="dataModal"
+            :title='dataTitle'
+            :mask-closable="false"
+            width='600px'
+        >
             <row style="margin-top:20px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     名称
                 </i-col>
                 <i-col span='20'>
@@ -19,21 +39,39 @@
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload'
-                        :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload
+                        style="margin-bottom:10px;"
+                        :action="URL.UPLOAD_URL"
+                        :on-success='successUpload'
+                        :before-upload='beforeUpload'
+                        :show-upload-list='false'
+                        :headers="headers"
+                    >
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
-                <i-col span='24' style="display:block;margin:0 auto;">
-                    <img :src="goodData.cover" width="100px">
+                <i-col
+                    span='24'
+                    style="display:block;margin:0 auto;"
+                >
+                    <img
+                        :src="goodData.cover"
+                        width="100px"
+                    >
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     备注
                 </i-col>
                 <i-col span='20'>
@@ -41,39 +79,67 @@
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     每日名额
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="goodData.total" :min="1"></InputNumber>
+                    <InputNumber
+                        v-model="goodData.total"
+                        :min="1"
+                    ></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     每人每日限额
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="goodData.limit" :min="1"></InputNumber>
+                    <InputNumber
+                        v-model="goodData.limit"
+                        :min="1"
+                    ></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     价格
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="goodData.price" :min="0.00" :precision='2'></InputNumber>
+                    <InputNumber
+                        v-model="goodData.price"
+                        :min="0.00"
+                        :precision='2'
+                    ></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     限制天数（当天能买多久后的票）
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="goodData.from_now" :min="1"></InputNumber>
+                    <InputNumber
+                        v-model="goodData.from_now"
+                        :min="1"
+                    ></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     内容
                 </i-col>
                 <i-col span='20'>
@@ -81,8 +147,16 @@
                 </i-col>
             </row>
             <div slot="footer">
-                <Button type="text" size="large" @click="openGoodModal(false)">取消</Button>
-                <Button type="primary" size="large" @click="inputData()">确定</Button>
+                <Button
+                    type="text"
+                    size="large"
+                    @click="openGoodModal(false)"
+                >取消</Button>
+                <Button
+                    type="primary"
+                    size="large"
+                    @click="inputData()"
+                >确定</Button>
             </div>
         </Modal>
     </div>
@@ -91,6 +165,7 @@
 <script>
 import axios from "@/libs/api.request";
 import Cookies from "js-cookie";
+import URL from "_conf/url";
 import YimoVueEditor from "yimo-vue-editor";
 export default {
     components: {
@@ -98,9 +173,11 @@ export default {
     },
     data() {
         return {
-
+            URL: {
+                UPLOAD_URL: ""
+            },
             isRun: true,
-            currentPage:1,
+            currentPage: 1,
             total: 1,
             pre_page: 1,
             dataModal: false,
@@ -241,16 +318,16 @@ export default {
         };
     },
     methods: {
-        changePage(index){
+        changePage(index) {
             axios
                 .request({
-                    url: "ticket/ticket?page="+index,
+                    url: "ticket/ticket?page=" + index,
                     method: "get"
                 })
                 .then(res => {
                     this.ticketList = res.data.data;
-                    this.total = res.data.total
-                    this.pre_page = res.data.per_page
+                    this.total = res.data.total;
+                    this.pre_page = res.data.per_page;
                 });
         },
         successUpload(file) {
@@ -260,13 +337,13 @@ export default {
         getTicket() {
             axios
                 .request({
-                    url: "ticket/ticket?page="+this.currentPage,
+                    url: "ticket/ticket?page=" + this.currentPage,
                     method: "get"
                 })
                 .then(res => {
                     this.ticketList = res.data.data;
-                    this.total = res.data.total
-                    this.pre_page = res.data.per_page
+                    this.total = res.data.total;
+                    this.pre_page = res.data.per_page;
                 });
         },
         newData() {
@@ -290,28 +367,35 @@ export default {
                 {
                     key: "name",
                     title: "名称"
-                },{
+                },
+                {
                     key: "remark",
                     title: "备注"
-                },{
+                },
+                {
                     key: "total",
                     title: "每日限额"
-                },{
+                },
+                {
                     key: "limit",
                     title: "每人每日限额"
-                },{
+                },
+                {
                     key: "price",
                     title: "价格"
-                },{
+                },
+                {
                     key: "from_now",
                     title: "限制天数"
-                },{
+                },
+                {
                     key: "content",
                     title: "封面"
-                },{
+                },
+                {
                     key: "cover",
                     title: "封面"
-                },
+                }
             ];
             for (let i in this.goodData) {
                 console.log(this.goodData[i]);
@@ -358,7 +442,7 @@ export default {
                 //修改
                 axios
                     .request({
-                        url: "ticket/ticket/"+this.currentId,
+                        url: "ticket/ticket/" + this.currentId,
                         method: "put",
                         data: {
                             name: this.goodData.name,
@@ -376,10 +460,11 @@ export default {
                         this.getTicket();
                     });
             }
-            this.openGoodModal(false)
+            this.openGoodModal(false);
         }
     },
     mounted() {
+        this.URL.UPLOAD_URL = URL.UPLOAD_URL;
         this.getTicket();
     },
     computed: {

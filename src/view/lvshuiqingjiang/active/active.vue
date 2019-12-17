@@ -1,33 +1,73 @@
 <template>
     <div>
-            <Spin size="large" fix v-if="spinShow"></Spin>
+        <Spin
+            size="large"
+            fix
+            v-if="spinShow"
+        ></Spin>
         <row>
             <i-col style="margin-bottom:10px;">
-                <Button type='primary' @click='newData()'>新建活动</Button>
+                <Button
+                    type='primary'
+                    @click='newData()'
+                >新建活动</Button>
             </i-col>
             <i-col style="margin-bottom:20px;">
-                <Page :total="total" :page-size="pre_page" :on-change='changePage' />
+                <Page
+                    :total="total"
+                    :page-size="pre_page"
+                    :on-change='changePage'
+                />
             </i-col>
             <i-col>
-                <i-table size="large" style="min-width:800px;" :columns="activeColunm" :data="activeList"></i-table>
+                <i-table
+                    size="large"
+                    style="min-width:800px;"
+                    :columns="activeColunm"
+                    :data="activeList"
+                ></i-table>
             </i-col>
         </row>
-        <Modal v-model="dataModal" :title='dataTitle' @on-ok="okInput" @on-cancel="cancelInput(false)">
+        <Modal
+            v-model="dataModal"
+            :title='dataTitle'
+            @on-ok="okInput"
+            @on-cancel="cancelInput(false)"
+        >
             <row>
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     活动封面
                 </i-col>
                 <i-col span='4'>
-                    <Upload style="margin-bottom:10px;" action="https://zhlsqj.com/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload
+                        style="margin-bottom:10px;"
+                        :action="URL.UPLOAD_URL"
+                        :on-success='successUpload'
+                        :before-upload='beforeUpload'
+                        :show-upload-list='false'
+                        :headers="headers"
+                    >
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                 </i-col>
-                <i-col span='24' style="display:block;margin:0 auto;">
-                    <img :src="activeData.image" width="100%">
+                <i-col
+                    span='24'
+                    style="display:block;margin:0 auto;"
+                >
+                    <img
+                        :src="activeData.image"
+                        width="100%"
+                    >
                 </i-col>
             </row>
             <row style="margin-top:20px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     活动标题
                 </i-col>
                 <i-col span='20'>
@@ -35,60 +75,123 @@
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     活动内容
                 </i-col>
                 <i-col span='20'>
-                    <Input v-model="activeData.content" type="textarea" :rows='6' />
+                    <Input
+                        v-model="activeData.content"
+                        type="textarea"
+                        :rows='6'
+                    />
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     活动日期
                 </i-col>
                 <i-col span='20'>
-                    <DatePicker type='daterange' @on-change='changeActiveDate' :value='activeData.activeDate' placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
+                    <DatePicker
+                        type='daterange'
+                        @on-change='changeActiveDate'
+                        :value='activeData.activeDate'
+                        placement="bottom-end"
+                        placeholder="选择日期"
+                        style="width: 200px"
+                    ></DatePicker>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     报名名额
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber :min="0" v-model="activeData.places" :formatter="value => `${value}人`" :parser="value => value.replace('人', '')"></InputNumber>
+                    <InputNumber
+                        :min="0"
+                        v-model="activeData.places"
+                        :formatter="value => `${value}人`"
+                        :parser="value => value.replace('人', '')"
+                    ></InputNumber>
                 </i-col>
             </row>
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     报名日期
                 </i-col>
                 <i-col span='20'>
-                    <DatePicker @on-change='changeActiveSignDate' :value='activeData.signDate' type="daterange" placement="bottom-end" placeholder="选择日期" style="width: 200px"></DatePicker>
+                    <DatePicker
+                        @on-change='changeActiveSignDate'
+                        :value='activeData.signDate'
+                        type="daterange"
+                        placement="bottom-end"
+                        placeholder="选择日期"
+                        style="width: 200px"
+                    ></DatePicker>
                 </i-col>
             </row>
 
             <row style="margin-top:10px;">
-                <i-col span='4' style="line-height:30px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     报名类型
                 </i-col>
                 <i-col span='20'>
-                    <RadioGroup v-model="activeType" type="button" @on-change='changeActiveType'>
+                    <RadioGroup
+                        v-model="activeType"
+                        type="button"
+                        @on-change='changeActiveType'
+                    >
                         <Radio label="免费"></Radio>
                         <Radio label="付费"></Radio>
                     </RadioGroup>
                 </i-col>
             </row>
-            <row style="margin-top:10px;" v-if="activeData.type === 1">
-                <i-col span='4' style="line-height:30px;">
+            <row
+                style="margin-top:10px;"
+                v-if="activeData.type === 1"
+            >
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     报名金额
                 </i-col>
                 <i-col span='20'>
-                    <InputNumber v-model="activeData.money" :min="0.00" :precision='2' :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')" :parser="value => value.replace(/$s?|(,*)/g, '')"></InputNumber>
+                    <InputNumber
+                        v-model="activeData.money"
+                        :min="0.00"
+                        :precision='2'
+                        :formatter="value => `¥ ${value}`.replace(/B(?=(d{3})+(?!d))/g, ',')"
+                        :parser="value => value.replace(/$s?|(,*)/g, '')"
+                    ></InputNumber>
                 </i-col>
             </row>
         </Modal>
-        <Modal v-model="peopleModal" title='报名名单' @on-ok="cancelPeople(false)" @on-cancel="cancelPeople(false)">
-            <i-table size="large" :columns="peopleColunm" :data="peopleList"></i-table>
+        <Modal
+            v-model="peopleModal"
+            title='报名名单'
+            @on-ok="cancelPeople(false)"
+            @on-cancel="cancelPeople(false)"
+        >
+            <i-table
+                size="large"
+                :columns="peopleColunm"
+                :data="peopleList"
+            ></i-table>
         </Modal>
     </div>
 </template>
@@ -96,22 +199,25 @@
 <script>
 import axios from "@/libs/api.request";
 import Cookies from "js-cookie";
+import URL from "_conf/url";
 export default {
     data() {
         return {
-            spinShow:false,
+            URL: {
+                UPLOAD_URL: URL.UPLOAD_URL
+            },
+            spinShow: false,
             total: 1,
             pre_page: 1,
-            currentPage:1,
+            currentPage: 1,
             dataModal: false,
             isNew: false,
-            peopleModal:false,
+            peopleModal: false,
             currentId: "",
             dataTitle: "新增活动",
             activeType: "免费",
             activeData: {
-                image:
-                    "",
+                image: "",
                 title: "",
                 content: "",
                 activeDate: ["2018-11-07", "2018-12-05"],
@@ -149,10 +255,19 @@ export default {
                             "p",
                             {
                                 attrs: {
-                                    style:'color:#'+params.row.status===0?'2d8cf0':(params.row.status===1?'19be6b':'ff9900')
+                                    style:
+                                        "color:#" + params.row.status === 0
+                                            ? "2d8cf0"
+                                            : params.row.status === 1
+                                            ? "19be6b"
+                                            : "ff9900"
                                 }
                             },
-                            params.row.status===0?'未开始':(params.row.status===1?'开始':'已结束')
+                            params.row.status === 0
+                                ? "未开始"
+                                : params.row.status === 1
+                                ? "开始"
+                                : "已结束"
                         );
                     }
                 },
@@ -216,8 +331,8 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.currentId = params.row.id
-                                            this.getActivePeople()
+                                            this.currentId = params.row.id;
+                                            this.getActivePeople();
                                         }
                                     }
                                 },
@@ -237,35 +352,33 @@ export default {
                     status: "1"
                 }
             ],
-            peopleColunm:[
+            peopleColunm: [
                 {
-                    title:'报名人',
-                    key:'nickname'
-                },{
-                    title:'联系人',
+                    title: "报名人",
+                    key: "nickname"
+                },
+                {
+                    title: "联系人",
                     render: (h, params) => {
                         return h("div", [
                             h(
                                 "p",
                                 {
-                                    attrs: {
-                                        
-                                    }
+                                    attrs: {}
                                 },
                                 params.row.pivot.name
                             )
                         ]);
                     }
-                },{
-                    title:'联系电话',
+                },
+                {
+                    title: "联系电话",
                     render: (h, params) => {
                         return h("div", [
                             h(
                                 "p",
                                 {
-                                    attrs: {
-                                        
-                                    }
+                                    attrs: {}
                                 },
                                 params.row.pivot.contact_way
                             )
@@ -273,13 +386,13 @@ export default {
                     }
                 }
             ],
-            peopleList:[]
+            peopleList: []
         };
     },
     methods: {
-        changePage(index){
-            this.currentPage = index
-            this.getActive()
+        changePage(index) {
+            this.currentPage = index;
+            this.getActive();
         },
         newData() {
             this.isNew = true;
@@ -295,8 +408,8 @@ export default {
             };
             this.cancelInput(true);
         },
-        cancelPeople(i){
-            this.peopleModal = i
+        cancelPeople(i) {
+            this.peopleModal = i;
         },
         cancelInput(i) {
             //打开活动Modal
@@ -308,7 +421,7 @@ export default {
         okInput() {
             //提交活动数据
             if (this.isNew) {
-                this.spinShow = true
+                this.spinShow = true;
                 //新增
                 axios
                     .request({
@@ -332,7 +445,7 @@ export default {
                         this.$Message.success("新增成功");
                     });
             } else {
-                this.spinShow = true
+                this.spinShow = true;
                 //修改
                 axios
                     .request({
@@ -358,23 +471,23 @@ export default {
             }
         },
         getActive() {
-            this.spinShow = true
+            this.spinShow = true;
             //获取活动数据
             axios
                 .request({
-                    url: "activity/activitys?page="+this.currentPage,
+                    url: "activity/activitys?page=" + this.currentPage,
                     method: "get"
                 })
                 .then(res => {
                     this.activeList = res.data.data;
-                    this.spinShow = false
+                    this.spinShow = false;
                 });
         },
         changeActiveDate(t) {
-            this.activeData.activeDate = t
+            this.activeData.activeDate = t;
         },
         changeActiveSignDate(t) {
-            this.activeData.signDate = t
+            this.activeData.signDate = t;
         },
         changeActiveType(t) {
             //更改活动报名类型触发
@@ -385,22 +498,25 @@ export default {
             }
         },
         //查看报名人员
-        getActivePeople(){
-            this.spinShow = true
-            axios.request({
-                url:'activity/activitys/'+this.currentId,
-                method:'get'
-            }).then(res=>{
-                this.spinShow = false
-                this.cancelPeople(true)
-                this.peopleList = res.data.fans
-            })
+        getActivePeople() {
+            this.spinShow = true;
+            axios
+                .request({
+                    url: "activity/activitys/" + this.currentId,
+                    method: "get"
+                })
+                .then(res => {
+                    this.spinShow = false;
+                    this.cancelPeople(true);
+                    this.peopleList = res.data.fans;
+                });
         },
         //上传事件
         successUpload(file) {},
         beforeUpload(file) {}
     },
     mounted() {
+        this.URL.UPLOAD_URL = URL.UPLOAD_URL;
         this.getActive();
     },
     computed: {
