@@ -113,6 +113,20 @@
                     span='4'
                     style="line-height:30px;"
                 >
+                    每日库存
+                </i-col>
+                <i-col span='20'>
+                    <InputNumber
+                        v-model="goodData.daily_inventory"
+                        :min="1"
+                    ></InputNumber>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col
+                    span='4'
+                    style="line-height:30px;"
+                >
                     每人每日限额
                 </i-col>
                 <i-col span='20'>
@@ -205,6 +219,7 @@ export default {
                 price: 0,
                 limit: 1,
                 total: 0,
+                daily_inventory: 0,
                 name: "",
                 remark: "",
                 cover: "",
@@ -212,20 +227,20 @@ export default {
                 is_up: 0
             },
             ticketList: [
-                {
-                    content: "123",
-                    cover:
-                        "http://download.rdoorweb.com/20181210/c1a21573763af2cac196c12b3b6c56b1.png",
-                    created_at: "2019-01-26 00:00:00",
-                    from_now: 7,
-                    id: 1,
-                    is_up: 1,
-                    limit: 20,
-                    name: "门票",
-                    price: 45,
-                    remark: "",
-                    total: 100
-                }
+                // {
+                //     content: "123",
+                //     cover:
+                //         "http://download.rdoorweb.com/20181210/c1a21573763af2cac196c12b3b6c56b1.png",
+                //     created_at: "2019-01-26 00:00:00",
+                //     from_now: 7,
+                //     id: 1,
+                //     is_up: 1,
+                //     limit: 20,
+                //     name: "门票",
+                //     price: 45,
+                //     remark: "",
+                //     total: 100
+                // }
             ],
             ticketColunm: [
                 {
@@ -299,6 +314,8 @@ export default {
                                                 params.row.remark;
                                             this.goodData.total =
                                                 params.row.total;
+                                            this.goodData.daily_inventory =
+                                                params.row.daily_inventory;
                                             this.goodData.limit =
                                                 params.row.limit;
                                             this.goodData.price = parseFloat(
@@ -379,6 +396,7 @@ export default {
             this.goodData.name = "";
             this.goodData.remark = "";
             this.goodData.total = 0;
+            this.goodData.daily_inventory = 0;
             this.goodData.limit = 1;
             this.goodData.price = 0;
             this.goodData.is_up = 0;
@@ -404,6 +422,10 @@ export default {
                 {
                     key: "total",
                     title: "每日限额"
+                },
+                {
+                    key: "daily_inventory",
+                    title: "每日库存"
                 },
                 {
                     key: "limit",
@@ -457,6 +479,7 @@ export default {
                             remark: this.goodData.remark,
                             cover: this.goodData.cover,
                             total: this.goodData.total,
+                            daily_inventory: this.goodData.daily_inventory,
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             content: this.goodData.content,
@@ -478,6 +501,7 @@ export default {
                             remark: this.goodData.remark,
                             cover: this.goodData.cover,
                             total: this.goodData.total,
+                            daily_inventory: this.goodData.daily_inventory,
                             limit: this.goodData.limit,
                             price: this.goodData.price,
                             content: this.goodData.content,
